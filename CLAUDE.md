@@ -273,4 +273,37 @@ All datasets are in `data/` and available at:
 
 ---
 
+cd "/Users/asmuie/sta572 Rprog/sta572"
+
+# Clear ALL freeze caches first
+rm -rf "_freeze/C1 Intro to time series"
+rm -rf "_freeze/C2 Univariate Modelling Techniques"
+rm -rf "_freeze/C3 Econometric Modelling"
+rm -rf "_freeze/C4 Stochastic Process"
+rm -rf "_freeze/C5 BoxJenkins"
+
+# Render each chapter individually
+quarto render "C1 Intro to time series.qmd"
+quarto render "C2 Univariate Modelling Techniques.qmd"
+quarto render "C3 Econometric Modelling.qmd"
+quarto render "C4 Stochastic Process.qmd"
+quarto render "C5 BoxJenkins.qmd"
+quarto render "index.qmd"
+
+# Verify .nojekyll is still there
+ls docs/.nojekyll
+
+# Stage everything
+git add docs/ _freeze/
+git add C1\ Intro\ to\ time\ series.qmd
+git add C2\ Univariate\ Modelling\ Techniques.qmd
+git add C3\ Econometric\ Modelling.qmd
+git add C4\ Stochastic\ Process.qmd
+git add C5\ BoxJenkins.qmd
+git add index.qmd docs/search.json
+
+# Commit and push
+git commit -m "Re-render all chapters"
+git push origin main
+
 *Last updated: April 2026*

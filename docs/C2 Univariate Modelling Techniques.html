@@ -2331,7 +2331,7 @@ Figure&nbsp;5: Decomposition-based 12-month forecast for electricity output inde
 <span id="cb61-22"><a href="#cb61-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">"Holt-Winters *"</span>),</span>
 <span id="cb61-23"><a href="#cb61-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">Trend     =</span> <span class="fu">c</span>(<span class="st">"No"</span>,<span class="st">"Yes"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>),</span>
 <span id="cb61-24"><a href="#cb61-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">Seasonal  =</span> <span class="fu">c</span>(<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>),</span>
-<span id="cb61-25"><a href="#cb61-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">MultiStep =</span> <span class="fu">c</span>(<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>),</span>
+<span id="cb61-25"><a href="#cb61-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">MultiStep =</span> <span class="fu">c</span>(<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>,<span class="st">"Yes"</span>,<span class="st">"No"</span>,<span class="st">"Yes"</span>),</span>
 <span id="cb61-26"><a href="#cb61-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">n         =</span> n_errors,</span>
 <span id="cb61-27"><a href="#cb61-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">MSE       =</span> <span class="fu">round</span>(<span class="fu">c</span>(mse_naive, mse_trend, mse_ac, mse_apc,</span>
 <span id="cb61-28"><a href="#cb61-28" aria-hidden="true" tabindex="-1"></a>                      mse_ses,   mse_des,   mse_h,  mse_ar,</span>
@@ -2372,7 +2372,7 @@ Table&nbsp;11: Summary comparison of univariate methods on the worked example
 <td style="text-align: center;">Naive</td>
 <td style="text-align: center;">No</td>
 <td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
 <td style="text-align: center;">5</td>
 <td style="text-align: center;">4.8000</td>
 </tr>
@@ -2380,7 +2380,7 @@ Table&nbsp;11: Summary comparison of univariate methods on the worked example
 <td style="text-align: center;">Naive with Trend</td>
 <td style="text-align: center;">Yes</td>
 <td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;">3.7140</td>
 </tr>
@@ -2388,7 +2388,7 @@ Table&nbsp;11: Summary comparison of univariate methods on the worked example
 <td style="text-align: center;">Avg Change</td>
 <td style="text-align: center;">No</td>
 <td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
 <td style="text-align: center;">3</td>
 <td style="text-align: center;">2.4167</td>
 </tr>
@@ -2396,7 +2396,7 @@ Table&nbsp;11: Summary comparison of univariate methods on the worked example
 <td style="text-align: center;">Avg % Change</td>
 <td style="text-align: center;">No</td>
 <td style="text-align: center;">No</td>
-<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
 <td style="text-align: center;">3</td>
 <td style="text-align: center;">4.1107</td>
 </tr>

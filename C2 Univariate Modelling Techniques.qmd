@@ -780,7 +780,7 @@ data.frame(
                 "Holt-Winters *"),
   Trend     = c("No","Yes","No","No","No","Yes","Yes","No","Yes"),
   Seasonal  = c("No","No","No","No","No","No","No","No","Yes"),
-  MultiStep = c("Yes","Yes","Yes","Yes","No","Yes","Yes","No","Yes"),
+  MultiStep = c("No","No","No","No","No","Yes","Yes","No","Yes"),
   n         = n_errors,
   MSE       = round(c(mse_naive, mse_trend, mse_ac, mse_apc,
                       mse_ses,   mse_des,   mse_h,  mse_ar,

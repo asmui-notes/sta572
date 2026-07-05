@@ -6,7 +6,7 @@ Set up the R programming environment for Chapter 3.
 
 ```{r}
 #| label: setup
-
+#| tbl-cap: "R programming environment setup"
 
 library(fpp2)
 library(forecast)
