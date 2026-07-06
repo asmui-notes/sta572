@@ -381,9 +381,9 @@ window.Quarto = {
 <p>Four basic model types are involved:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 24%">
-<col style="width: 31%">
-<col style="width: 44%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -421,7 +421,7 @@ window.Quarto = {
 <h1 data-number="2"><span class="header-section-number">2</span> ARIMA Models</h1>
 <section id="autoregressive-ar-model" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="autoregressive-ar-model"><span class="header-section-number">2.1</span> Autoregressive (AR) Model</h2>
-<p>A <span class="math inline">\(p\)</span>th-order autoregressive model, <strong>AR(<span class="math inline">\(p\)</span>)</strong>, is:</p>
+<p>A <span class="math inline">\(p\)</span>th-order autoregressive model, <strong>AR(</strong><span class="math inline">\(p\)</span>), is:</p>
 <p><span class="math display">\[
 y_t = \phi_0 + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \varepsilon_t \tag{1}
 \]</span></p>
@@ -450,7 +450,7 @@ y_t = \phi_0 + \phi_1 y_{t-1} + \varepsilon_t \tag{2}
 </section>
 <section id="moving-average-ma-model" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="moving-average-ma-model"><span class="header-section-number">2.2</span> Moving Average (MA) Model</h2>
-<p>A <span class="math inline">\(q\)</span>th-order moving average model, <strong>MA(<span class="math inline">\(q\)</span>)</strong>, is:</p>
+<p>A <span class="math inline">\(q\)</span>th-order moving average model, <strong>MA(</strong><span class="math inline">\(q\)</span>), is:</p>
 <p><span class="math display">\[
 y_t = \phi_0 + \varepsilon_t + \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2}
       + \cdots + \theta_q \varepsilon_{t-q} \tag{4}
@@ -501,7 +501,7 @@ y_t = \phi_0 + \phi_1 y_{t-1} + \theta_1 \varepsilon_{t-1} + \varepsilon_t
 </section>
 <section id="autoregressive-integrated-moving-average-arimapdq" class="level2" data-number="2.4">
 <h2 data-number="2.4" class="anchored" data-anchor-id="autoregressive-integrated-moving-average-arimapdq"><span class="header-section-number">2.4</span> Autoregressive Integrated Moving Average — ARIMA(<span class="math inline">\(p\)</span>,<span class="math inline">\(d\)</span>,<span class="math inline">\(q\)</span>)</h2>
-<p>When the stationarity assumption is not fulfilled, the series must be <strong>differenced</strong> <span class="math inline">\(d\)</span> times to achieve stationarity. The resulting model is <strong>ARIMA(<span class="math inline">\(p,d,q\)</span>)</strong>.</p>
+<p>When the stationarity assumption is not fulfilled, the series must be <strong>differenced</strong> <span class="math inline">\(d\)</span> times to achieve stationarity. The resulting model is <strong>ARIMA(</strong><span class="math inline">\(p,d,q\)</span>).</p>
 <section id="arima111-a-simple-case" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="arima111-a-simple-case"><span class="header-section-number">2.4.1</span> ARIMA(1,1,1) — a simple case</h3>
 <p>Let <span class="math inline">\(w_t = y_t - y_{t-1}\)</span> (first difference, assumed stationary). Then:</p>
@@ -647,9 +647,9 @@ Tip
 <p>The Box-Jenkins methodology involves <strong>four iterative stages</strong>:</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 26%">
-<col style="width: 23%">
-<col style="width: 50%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -724,7 +724,7 @@ r_0 = \frac{E(\varepsilon_t^2)}{\sigma_\varepsilon^2} = 1
 r_k = \frac{E(\varepsilon_t\,\varepsilon_{t+k})}{\sigma_\varepsilon^2} = 0
 \quad \text{(errors are independent)}
 \]</span></p>
-<p><strong>All autocorrelations at lags <span class="math inline">\(k &gt; 0\)</span> are zero.</strong> A white noise ACF shows all spikes within the confidence bounds.</p>
+<p><strong>All autocorrelations at lags</strong> <span class="math inline">\(k &gt; 0\)</span> are zero. A white noise ACF shows all spikes within the confidence bounds.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Show R Code</summary>
@@ -827,7 +827,7 @@ r_2 = \frac{\phi_1^2 + \phi_2(1+\phi_2)}{1-\phi_2}\]</span></p>
 <p><span class="math display">\[
 r_1 = \frac{\theta_1}{1 + \theta_1^2}, \qquad r_k = 0 \text{ for } k \geq 2 \tag{18}
 \]</span></p>
-<p><strong>Pattern: ACF has exactly <span class="math inline">\(q\)</span> significant spikes (cuts off after lag <span class="math inline">\(q\)</span>).</strong></p>
+<p><strong>Pattern: ACF has exactly</strong> <span class="math inline">\(q\)</span> significant spikes (cuts off after lag <span class="math inline">\(q\)</span>).</p>
 <p><strong>Example:</strong> MA(1) with <span class="math inline">\(\theta_1 = 0.7\)</span>:</p>
 <p><span class="math display">\[r_1 = \frac{0.7}{1 + 0.7^2} = \frac{0.7}{1.49} = 0.4698 \tag{19}\]</span></p>
 <div class="cell">
@@ -888,9 +888,9 @@ r_2 = \frac{\theta_2}{1 + \theta_1^2 + \theta_2^2}\]</span></p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
-<col style="width: 18%">
-<col style="width: 22%">
-<col style="width: 33%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -902,19 +902,19 @@ r_2 = \frac{\theta_2}{1 + \theta_1^2 + \theta_2^2}\]</span></p>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>AR(<span class="math inline">\(p\)</span>)</strong></td>
+<td style="text-align: left;"><strong>AR(</strong><span class="math inline">\(p\)</span>)</td>
 <td style="text-align: left;">The coefficients show a decay pattern</td>
 <td style="text-align: left;">There are <span class="math inline">\(k\)</span> significant spike(s)</td>
 <td style="text-align: left;">If the PACF shows that there is one significant spike observed at lag 1 and ACF exhibits a decay pattern, the suggested model is AR(1).</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>MA(<span class="math inline">\(q\)</span>)</strong></td>
+<td style="text-align: left;"><strong>MA(</strong><span class="math inline">\(q\)</span>)</td>
 <td style="text-align: left;">There are <span class="math inline">\(k\)</span> significant spike(s)</td>
 <td style="text-align: left;">The coefficients show a decay pattern</td>
 <td style="text-align: left;">If the ACF shows that there is one significant spike observed at lag 1 and PACF exhibits a decay pattern, the suggested model is MA(1).</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>ARMA(<span class="math inline">\(p\)</span>,<span class="math inline">\(q\)</span>)</strong></td>
+<td style="text-align: left;"><strong>ARMA(</strong><span class="math inline">\(p\)</span>,<span class="math inline">\(q\)</span>)</td>
 <td style="text-align: left;">There are <span class="math inline">\(k\)</span> significant spike(s)</td>
 <td style="text-align: left;">There are <span class="math inline">\(k\)</span> significant spike(s)</td>
 <td style="text-align: left;">If the ACF shows that there is one significant spike observed at lag 1 and PACF shows that there is one significant spike observed at lag 1, the suggested model is ARMA(1,1).</td>
@@ -1423,10 +1423,10 @@ Exercise
 <p><strong>Last three observations (fitted values and residuals):</strong></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 24%">
-<col style="width: 27%">
-<col style="width: 27%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1492,7 +1492,7 @@ y_t = (1+\hat\phi_1)\,y_{t-1} + (-\hat\phi_1+\hat\phi_2)\,y_{t-2} - \hat\phi_2\,
 y_t = 1.6848\,y_{t-1} - 0.6629\,y_{t-2} - 0.0219\,y_{t-3}
       + \varepsilon_t - 0.7805\,\varepsilon_{t-1}
 \]</span></p>
-<p><strong>Step 2 — One-step-ahead forecast: <span class="math inline">\(\hat{y}_{191|190}\)</span> (January 1, 2026)</strong></p>
+<p><strong>Step 2 — One-step-ahead forecast:</strong> <span class="math inline">\(\hat{y}_{191|190}\)</span> (January 1, 2026)</p>
 <p>Substitute <span class="math inline">\(t = T+1 = 191\)</span>. Set <span class="math inline">\(\varepsilon_{T+1} = 0\)</span> (future error unknown); replace past errors with residuals (<span class="math inline">\(\varepsilon_T = -8.20\)</span>):</p>
 <p><span class="math display">\[
 \hat{y}_{191} = 1.6848\,y_{190} - 0.6629\,y_{189} - 0.0219\,y_{188}
@@ -1508,7 +1508,7 @@ y_t = 1.6848\,y_{t-1} - 0.6629\,y_{t-2} - 0.0219\,y_{t-3}
 <p><span class="math display">\[
 \boxed{\hat{y}_{191} = 6{,}942.76}
 \]</span></p>
-<p><strong>Step 3 — Two-step-ahead forecast: <span class="math inline">\(\hat{y}_{192|190}\)</span> (January 2, 2026)</strong></p>
+<p><strong>Step 3 — Two-step-ahead forecast:</strong> <span class="math inline">\(\hat{y}_{192|190}\)</span> (January 2, 2026)</p>
 <p>Substitute <span class="math inline">\(t = T+2 = 192\)</span>. Set <span class="math inline">\(\varepsilon_{T+2} = \varepsilon_{T+1} = 0\)</span>; replace <span class="math inline">\(y_{T+1}\)</span> with <span class="math inline">\(\hat{y}_{191} = 6{,}942.76\)</span>:</p>
 <p><span class="math display">\[
 \hat{y}_{192} = 1.6848\,\hat{y}_{191} - 0.6629\,y_{190} - 0.0219\,y_{189}
@@ -1839,7 +1839,7 @@ sigma^2 estimated as 44.88:  log likelihood=-232.53
 AIC=475.05   AICc=476.01   BIC=486.23</code></pre>
 </div>
 </div>
-<p><strong>Estimated equation for SARIMA<span class="math inline">\((1,1,1)(1,1,1)_{12}\)</span>:</strong></p>
+<p><strong>Estimated equation for SARIMA</strong><span class="math inline">\((1,1,1)(1,1,1)_{12}\)</span>:</p>
 <p><span class="math display">\[
 (1 - \hat\phi_1 B)(1 - B)(1 - \hat\Phi_1 B^{12})(1 - B^{12})\,y_t
 = (1 + \hat\theta_1 B)(1 + \hat\Theta_1 B^{12})\,\varepsilon_t \tag{30}
@@ -2016,9 +2016,9 @@ Figure&nbsp;18: SARIMA forecast for IPI Manufacturing. The best model (selected 
 <h2 data-number="8.1" class="anchored" data-anchor-id="box-jenkins-methodology-four-stages"><span class="header-section-number">8.1</span> Box-Jenkins Methodology — Four Stages</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 35%">
-<col style="width: 30%">
-<col style="width: 35%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2055,9 +2055,9 @@ Figure&nbsp;18: SARIMA forecast for IPI Manufacturing. The best model (selected 
 <h2 data-number="8.2" class="anchored" data-anchor-id="acf-and-pacf-quick-reference"><span class="header-section-number">8.2</span> ACF and PACF — Quick Reference</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
 <col style="width: 33%">
-<col style="width: 41%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -2068,17 +2068,17 @@ Figure&nbsp;18: SARIMA forecast for IPI Manufacturing. The best model (selected 
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>AR(<span class="math inline">\(p\)</span>)</strong></td>
+<td style="text-align: left;"><strong>AR(</strong><span class="math inline">\(p\)</span>)</td>
 <td style="text-align: center;">Tails off</td>
 <td style="text-align: center;">Cuts off after lag <span class="math inline">\(p\)</span></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>MA(<span class="math inline">\(q\)</span>)</strong></td>
+<td style="text-align: left;"><strong>MA(</strong><span class="math inline">\(q\)</span>)</td>
 <td style="text-align: center;">Cuts off after lag <span class="math inline">\(q\)</span></td>
 <td style="text-align: center;">Tails off</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>ARMA(<span class="math inline">\(p\)</span>,<span class="math inline">\(q\)</span>)</strong></td>
+<td style="text-align: left;"><strong>ARMA(</strong><span class="math inline">\(p\)</span>,<span class="math inline">\(q\)</span>)</td>
 <td style="text-align: center;">Tails off</td>
 <td style="text-align: center;">Tails off</td>
 </tr>
@@ -2099,9 +2099,9 @@ Figure&nbsp;18: SARIMA forecast for IPI Manufacturing. The best model (selected 
 <h2 data-number="8.3" class="anchored" data-anchor-id="information-criteria-summary"><span class="header-section-number">8.3</span> Information Criteria Summary</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 37%">
-<col style="width: 31%">
-<col style="width: 31%">
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
 </colgroup>
 <thead>
 <tr class="header">

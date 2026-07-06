@@ -9,9 +9,8 @@
 /.quarto/
 *_cache/
 
-# Ignore *_files/ only outside docs/ (docs/ must be fully committed)
-*_files/
-!docs/**
+# Ignore *_files/ render artifacts only at the project root (docs/ must be fully committed)
+/*_files/
 
 # OS
 .DS_Store

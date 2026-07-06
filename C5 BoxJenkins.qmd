@@ -55,27 +55,24 @@ eva_snp <- snp[(n_e + 1):n_snp, ]
 
 # Introduction
 
-The **ARIMA** (AutoRegressive Integrated Moving Average) model is one of the most
-widely used statistical methods for time series forecasting. The Box-Jenkins
-methodology — developed by George Box and Gwilym Jenkins — provides a systematic
-four-stage approach for identifying, estimating, validating, and applying ARIMA models.
+The **ARIMA** (AutoRegressive Integrated Moving Average) model is one of the most widely used statistical methods for time series forecasting. The Box-Jenkins methodology — developed by George Box and Gwilym Jenkins — provides a systematic four-stage approach for identifying, estimating, validating, and applying ARIMA models.
 
 Four basic model types are involved:
 
 | Model | Acronym | Description |
-|:------|:-------:|:------------|
+|:---|:--:|:---|
 | Autoregressive | AR | Current value depends on its own past values |
 | Moving Average | MA | Current value depends on past error terms |
 | Mixed Autoregressive and Moving Average | ARMA | Combination of AR and MA |
 | Mixed Autoregressive Integrated Moving Average | ARIMA | ARMA applied to differenced series |
 
----
+------------------------------------------------------------------------
 
 # ARIMA Models
 
 ## Autoregressive (AR) Model
 
-A $p$th-order autoregressive model, **AR($p$)**, is:
+A $p$th-order autoregressive model, **AR(**$p$), is:
 
 $$
 y_t = \phi_0 + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \cdots + \phi_p y_{t-p} + \varepsilon_t \tag{1}
@@ -83,11 +80,10 @@ $$
 
 where:
 
-- $y_t$ = the response variable at time $t$
-- $y_{t-1}, y_{t-2}, \ldots, y_{t-p}$ = the response variable at lags $1, 2, \ldots, p$
-  (acting as independent variables)
-- $\phi_0, \phi_1, \ldots, \phi_p$ = coefficients to be estimated
-- $\varepsilon_t$ = error term at time $t$
+-   $y_t$ = the response variable at time $t$
+-   $y_{t-1}, y_{t-2}, \ldots, y_{t-p}$ = the response variable at lags $1, 2, \ldots, p$ (acting as independent variables)
+-   $\phi_0, \phi_1, \ldots, \phi_p$ = coefficients to be estimated
+-   $\varepsilon_t$ = error term at time $t$
 
 Using the **backward shift operator** $B$, Equation (1) becomes:
 
@@ -105,14 +101,13 @@ $$
 \Rightarrow (1 - \phi_1 B)\,y_t = \phi_0 + \varepsilon_t \tag{3}
 $$
 
-The current value at time $t$ equals the mean plus a contribution from one period back,
-plus the error term.
+The current value at time $t$ equals the mean plus a contribution from one period back, plus the error term.
 
----
+------------------------------------------------------------------------
 
 ## Moving Average (MA) Model
 
-A $q$th-order moving average model, **MA($q$)**, is:
+A $q$th-order moving average model, **MA(**$q$), is:
 
 $$
 y_t = \phi_0 + \varepsilon_t + \theta_1 \varepsilon_{t-1} + \theta_2 \varepsilon_{t-2}
@@ -121,9 +116,9 @@ $$
 
 where:
 
-- $\phi_0$ = constant mean of the process
-- $\theta_1, \theta_2, \ldots, \theta_q$ = MA coefficients to be estimated
-- $\varepsilon_t, \varepsilon_{t-1}, \ldots$ = current and past error terms
+-   $\phi_0$ = constant mean of the process
+-   $\theta_1, \theta_2, \ldots, \theta_q$ = MA coefficients to be estimated
+-   $\varepsilon_t, \varepsilon_{t-1}, \ldots$ = current and past error terms
 
 In backshift notation:
 
@@ -141,7 +136,7 @@ $$
 \Rightarrow y_t = \phi_0 + (1 + \theta_1 B)\,\varepsilon_t
 $$
 
----
+------------------------------------------------------------------------
 
 ## Mixed Autoregressive Moving Average — ARMA($p$,$q$)
 
@@ -169,12 +164,11 @@ $$
 \Rightarrow (1 - \phi_1 B)\,y_t = \phi_0 + (1 + \theta_1 B)\,\varepsilon_t
 $$
 
----
+------------------------------------------------------------------------
 
 ## Autoregressive Integrated Moving Average — ARIMA($p$,$d$,$q$)
 
-When the stationarity assumption is not fulfilled, the series must be **differenced**
-$d$ times to achieve stationarity. The resulting model is **ARIMA($p,d,q$)**.
+When the stationarity assumption is not fulfilled, the series must be **differenced** $d$ times to achieve stationarity. The resulting model is **ARIMA(**$p,d,q$).
 
 ### ARIMA(1,1,1) — a simple case
 
@@ -207,24 +201,22 @@ $$
 y_t = (1 + \phi_1) y_{t-1} - \phi_1 y_{t-2} + \varepsilon_t + \theta_1 \varepsilon_{t-1} \tag{11}
 $$
 
-::: {.callout-note}
-Equation (11) resembles ARIMA(2,0,1), but it **remains ARIMA(1,1,1)** — the coefficients
-do not independently satisfy stationarity conditions for a second-order AR model.
+::: callout-note
+Equation (11) resembles ARIMA(2,0,1), but it **remains ARIMA(1,1,1)** — the coefficients do not independently satisfy stationarity conditions for a second-order AR model.
 :::
 
-::: {.callout-tip}
+::: callout-tip
 **Exercise:** Write the backward shift operator formulations for:
 
-1. ARIMA(2,1,2)
-2. ARIMA(1,2,2)
+1.  ARIMA(2,1,2)
+2.  ARIMA(1,2,2)
 :::
 
----
+------------------------------------------------------------------------
 
 ## Seasonal ARIMA — SARIMA($p$,$d$,$q$)($P$,$D$,$Q$)$_s$
 
-For series exhibiting a **seasonal component**, seasonal differencing is required to
-remove the seasonality effect.
+For series exhibiting a **seasonal component**, seasonal differencing is required to remove the seasonality effect.
 
 Let $z_t$ be the seasonally differenced series:
 
@@ -233,23 +225,21 @@ z_t = y_t - y_{t-12} \quad \text{(monthly)} \qquad
 z_t = y_t - y_{t-4}  \quad \text{(quarterly)}
 $$
 
-If $z_t$ is still not stationary, apply regular differencing:
-$w_t = z_t - z_{t-1}$.
+If $z_t$ is still not stationary, apply regular differencing: $w_t = z_t - z_{t-1}$.
 
 **General SARIMA notation:** $\text{SARIMA}(p,d,q)(P,D,Q)_s$
 
-| Parameter | Meaning |
-|:---------:|:--------|
-| $p$ | Non-seasonal AR order |
-| $d$ | Non-seasonal differencing order |
-| $q$ | Non-seasonal MA order |
-| $P$ | Seasonal AR order |
-| $D$ | Seasonal differencing order |
-| $Q$ | Seasonal MA order |
-| $s$ | Length of seasonal period |
+| Parameter | Meaning                         |
+|:---------:|:--------------------------------|
+|    $p$    | Non-seasonal AR order           |
+|    $d$    | Non-seasonal differencing order |
+|    $q$    | Non-seasonal MA order           |
+|    $P$    | Seasonal AR order               |
+|    $D$    | Seasonal differencing order     |
+|    $Q$    | Seasonal MA order               |
+|    $s$    | Length of seasonal period       |
 
-**Example:** ARIMA$(1,1,1)(1,1,1)_{12}$: $p=1$, $d=1$, $q=1$ (non-seasonal);
-$P=1$, $D=1$, $Q=1$ (seasonal); $s=12$ (monthly data).
+**Example:** ARIMA$(1,1,1)(1,1,1)_{12}$: $p=1$, $d=1$, $q=1$ (non-seasonal); $P=1$, $D=1$, $Q=1$ (seasonal); $s=12$ (monthly data).
 
 ### Formulating SARIMA$(1,1,2)(1,1,1)_4$
 
@@ -272,21 +262,21 @@ $$
 = (1 + \theta_1 B + \theta_2 B^2)(1 + \Theta_1 B^4)\,\varepsilon_t
 $$
 
-::: {.callout-tip}
+::: callout-tip
 **Exercise:** Write the backward shift operator formulations for:
 
-1. SARIMA$(2,1,1)(1,1,1)_4$
-2. SARIMA$(2,1,2)(2,1,2)_{12}$
+1.  SARIMA$(2,1,1)(1,1,1)_4$
+2.  SARIMA$(2,1,2)(2,1,2)_{12}$
 :::
 
----
+------------------------------------------------------------------------
 
 # Box-Jenkins Methodology: Overview
 
 The Box-Jenkins methodology involves **four iterative stages**:
 
 | Stage | Name | Description |
-|:-----:|:-----|:------------|
+|:--:|:---|:---|
 | 1 | **Model Identification** | Use ACF/PACF and ADF test to determine $p$, $d$, $q$ |
 | 2 | **Model Estimation** | Estimate parameters using OLS or MLE |
 | 3 | **Model Validation** | Check residuals for white noise (Ljung-Box, AIC, BIC) |
@@ -296,11 +286,11 @@ If validation fails, return to Stage 1 and revise the model.
 
 **General identification rules:**
 
-- Data fluctuates around a constant value → ARMA($p,q$)
-- Data has a trend → first-order differencing → ARIMA($p,d,q$)
-- Data has a seasonal component → seasonal differencing → SARIMA$(p,d,q)(P,D,Q)_s$
+-   Data fluctuates around a constant value → ARMA($p,q$)
+-   Data has a trend → first-order differencing → ARIMA($p,d,q$)
+-   Data has a seasonal component → seasonal differencing → SARIMA$(p,d,q)(P,D,Q)_s$
 
----
+------------------------------------------------------------------------
 
 # Autocorrelation Function (ACF)
 
@@ -330,12 +320,11 @@ $$
 r_k \pm \frac{1.96}{\sqrt{T}} \tag{15}
 $$
 
----
+------------------------------------------------------------------------
 
 ## ACF of a Random Process (White Noise)
 
-For $y_t = \phi_0 + \varepsilon_t$ with $\varepsilon_t \overset{iid}{\sim} (0, \sigma_\varepsilon^2)$,
-setting $\phi_0 = 0$:
+For $y_t = \phi_0 + \varepsilon_t$ with $\varepsilon_t \overset{iid}{\sim} (0, \sigma_\varepsilon^2)$, setting $\phi_0 = 0$:
 
 At lag 0:
 
@@ -350,8 +339,7 @@ r_k = \frac{E(\varepsilon_t\,\varepsilon_{t+k})}{\sigma_\varepsilon^2} = 0
 \quad \text{(errors are independent)}
 $$
 
-**All autocorrelations at lags $k > 0$ are zero.** A white noise ACF shows all spikes
-within the confidence bounds.
+**All autocorrelations at lags** $k > 0$ are zero. A white noise ACF shows all spikes within the confidence bounds.
 
 ```{r}
 #| label: fig-acf-whitenoise
@@ -365,7 +353,7 @@ ggAcf(e, lag.max = 20) +
   theme_ts()
 ```
 
----
+------------------------------------------------------------------------
 
 ## ACF of an AR(1) Process
 
@@ -385,8 +373,8 @@ $$
 
 **Pattern:**
 
-- If $\phi_1 > 0$: ACF decays *exponentially toward zero*
-- If $\phi_1 < 0$: ACF decays *exponentially with alternating signs*
+-   If $\phi_1 > 0$: ACF decays *exponentially toward zero*
+-   If $\phi_1 < 0$: ACF decays *exponentially with alternating signs*
 
 ```{r}
 #| label: fig-acf-ar1
@@ -409,15 +397,14 @@ grid.arrange(p_pos, p_neg, ncol = 2)
 
 $$r_1 = 0.7^1 = 0.700, \quad r_2 = 0.7^2 = 0.490, \quad r_3 = 0.7^3 = 0.343, \quad \ldots$$
 
-::: {.callout-tip}
-**Exercise for AR(2):** For $y_t = \phi_0 + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \varepsilon_t$,
-prove that:
+::: callout-tip
+**Exercise for AR(2):** For $y_t = \phi_0 + \phi_1 y_{t-1} + \phi_2 y_{t-2} + \varepsilon_t$, prove that:
 
 $$r_1 = \frac{\phi_1}{1 - \phi_2}, \qquad
 r_2 = \frac{\phi_1^2 + \phi_2(1+\phi_2)}{1-\phi_2}$$
 :::
 
----
+------------------------------------------------------------------------
 
 ## ACF of an MA(1) Process
 
@@ -441,7 +428,7 @@ $$
 r_1 = \frac{\theta_1}{1 + \theta_1^2}, \qquad r_k = 0 \text{ for } k \geq 2 \tag{18}
 $$
 
-**Pattern: ACF has exactly $q$ significant spikes (cuts off after lag $q$).**
+**Pattern: ACF has exactly** $q$ significant spikes (cuts off after lag $q$).
 
 **Example:** MA(1) with $\theta_1 = 0.7$:
 
@@ -459,25 +446,22 @@ ggAcf(ma1, lag.max = 20) +
   theme_ts()
 ```
 
-::: {.callout-tip}
-**Exercise for MA(2):** For $y_t = \phi_0 + \theta_1\varepsilon_{t-1} + \theta_2\varepsilon_{t-2} + \varepsilon_t$,
-prove that:
+::: callout-tip
+**Exercise for MA(2):** For $y_t = \phi_0 + \theta_1\varepsilon_{t-1} + \theta_2\varepsilon_{t-2} + \varepsilon_t$, prove that:
 
 $$r_1 = \frac{\theta_1 + \theta_1\theta_2}{1 + \theta_1^2 + \theta_2^2}, \qquad
 r_2 = \frac{\theta_2}{1 + \theta_1^2 + \theta_2^2}$$
 :::
 
----
+------------------------------------------------------------------------
 
 # Partial Autocorrelation Function (PACF)
 
 ## Definition
 
-The PACF measures the correlation between $y_t$ and $y_{t-k}$ **after removing the
-linear effects of the intermediate lags** $y_{t-1}, y_{t-2}, \ldots, y_{t-k+1}$.
+The PACF measures the correlation between $y_t$ and $y_{t-k}$ **after removing the linear effects of the intermediate lags** $y_{t-1}, y_{t-2}, \ldots, y_{t-k+1}$.
 
-The PACF is computed iteratively via the **Yule-Walker equations**. The PACF at lag
-$k$, denoted $\alpha_k$, is:
+The PACF is computed iteratively via the **Yule-Walker equations**. The PACF at lag $k$, denoted $\alpha_k$, is:
 
 $$
 \alpha_k =
@@ -490,19 +474,18 @@ with the recursion $\phi_j^{(k)} = \phi_j^{(k-1)} - \alpha_k\,\phi_{k-j}^{(k-1)}
 ## ACF and PACF Patterns — Model Identification Guide
 
 | Model | ACF | PACF | Example |
-|:------|:----|:-----|:--------|
-| **AR($p$)** | The coefficients show a decay pattern | There are $k$ significant spike(s) | If the PACF shows that there is one significant spike observed at lag 1 and ACF exhibits a decay pattern, the suggested model is AR(1). |
-| **MA($q$)** | There are $k$ significant spike(s) | The coefficients show a decay pattern | If the ACF shows that there is one significant spike observed at lag 1 and PACF exhibits a decay pattern, the suggested model is MA(1). |
-| **ARMA($p$,$q$)** | There are $k$ significant spike(s) | There are $k$ significant spike(s) | If the ACF shows that there is one significant spike observed at lag 1 and PACF shows that there is one significant spike observed at lag 1, the suggested model is ARMA(1,1). |
+|:---|:---|:---|:---|
+| **AR(**$p$) | The coefficients show a decay pattern | There are $k$ significant spike(s) | If the PACF shows that there is one significant spike observed at lag 1 and ACF exhibits a decay pattern, the suggested model is AR(1). |
+| **MA(**$q$) | There are $k$ significant spike(s) | The coefficients show a decay pattern | If the ACF shows that there is one significant spike observed at lag 1 and PACF exhibits a decay pattern, the suggested model is MA(1). |
+| **ARMA(**$p$,$q$) | There are $k$ significant spike(s) | There are $k$ significant spike(s) | If the ACF shows that there is one significant spike observed at lag 1 and PACF shows that there is one significant spike observed at lag 1, the suggested model is ARMA(1,1). |
 
 ### Example: Constructing ACF and PACF Plots from a Table
 
-For a time series with $T = 100$ observations, the sample ACF and PACF values at
-lags 1 to 7 are given as:
+For a time series with $T = 100$ observations, the sample ACF and PACF values at lags 1 to 7 are given as:
 
-| Lag | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
-|:----|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| **ACF** | 0.35 | 0.15 | 0.029 | −0.04 | −0.021 | −0.11 | −0.01 |
+| Lag      |  1   |  2   |   3    |   4    |   5    |   6   |   7   |
+|:---------|:----:|:----:|:------:|:------:|:------:|:-----:|:-----:|
+| **ACF**  | 0.35 | 0.15 | 0.029  | −0.04  | −0.021 | −0.11 | −0.01 |
 | **PACF** | 0.25 | 0.13 | −0.012 | −0.165 | −0.018 | −0.10 | 0.035 |
 
 The **95% confidence band** is:
@@ -555,21 +538,15 @@ grid.arrange(p_acf_ex, p_pacf_ex, ncol = 2)
 
 **Interpretation:**
 
-- **ACF:** Lag 1 (0.35) exceeds the bound of ±0.196 → significant. Lags 2–7 are
-  within bounds → ACF cuts off after lag 1. This is consistent with an **MA(1)**
-  pattern.
-- **PACF:** Lag 1 (0.25) exceeds the bound → significant. Lags 2–7 are within bounds
-  → PACF cuts off after lag 1. This is consistent with an **AR(1)** pattern.
-- Both ACF and PACF show only one significant spike at lag 1 → the suggested model
-  is **ARMA(1,1)**.
+-   **ACF:** Lag 1 (0.35) exceeds the bound of ±0.196 → significant. Lags 2–7 are within bounds → ACF cuts off after lag 1. This is consistent with an **MA(1)** pattern.
+-   **PACF:** Lag 1 (0.25) exceeds the bound → significant. Lags 2–7 are within bounds → PACF cuts off after lag 1. This is consistent with an **AR(1)** pattern.
+-   Both ACF and PACF show only one significant spike at lag 1 → the suggested model is **ARMA(1,1)**.
 
-::: {.callout-note}
-When both ACF and PACF show $k$ significant spikes at the same lags, the series
-is best described by an ARMA model. Here $k=1$ at lag 1, so **ARMA(1,1)** is
-the starting candidate.
+::: callout-note
+When both ACF and PACF show $k$ significant spikes at the same lags, the series is best described by an ARMA model. Here $k=1$ at lag 1, so **ARMA(1,1)** is the starting candidate.
 :::
 
----
+------------------------------------------------------------------------
 
 ```{r}
 #| label: fig-acf-pacf-patterns
@@ -591,13 +568,11 @@ p6 <- ggPacf(sim_arma, lag.max=20) + labs(title="ARMA(1,1) — PACF") + theme_ts
 grid.arrange(p1, p2, p3, p4, p5, p6, nrow=3)
 ```
 
----
+------------------------------------------------------------------------
 
 # Box-Jenkins: Non-Seasonal ARIMA
 
-We demonstrate the full four-stage Box-Jenkins procedure using **S&P 500 E-mini
-Futures (ES=F)** daily adjusted close prices, April–December 2025, downloaded
-directly from Yahoo Finance via the `quantmod` package.
+We demonstrate the full four-stage Box-Jenkins procedure using **S&P 500 E-mini Futures (ES=F)** daily adjusted close prices, April–December 2025, downloaded directly from Yahoo Finance via the `quantmod` package.
 
 ## Stage 1 — Model Identification
 
@@ -663,8 +638,7 @@ autoplot(as.ts(diff_snp)) +
 adf.test(na.omit(diff_snp))
 ```
 
-Since $p$-value $\leq 0.05$, we **reject** $H_0$ — the differenced series is
-**stationary**. Order of differencing: $d = 1$.
+Since $p$-value $\leq 0.05$, we **reject** $H_0$ — the differenced series is **stationary**. Order of differencing: $d = 1$.
 
 ### Step 1e: ACF and PACF of Differenced Series
 
@@ -684,7 +658,7 @@ grid.arrange(p_acf_d, p_pacf_d, ncol = 2)
 
 Competing models to compare: ARIMA(1,1,0) and ARIMA(2,1,2).
 
----
+------------------------------------------------------------------------
 
 ## Stage 2 — Model Estimation (Non-Seasonal)
 
@@ -708,12 +682,11 @@ $$
 (1 - \hat\phi_1 B - \hat\phi_2 B^2)(1 - B)\,y_t = (1 + \hat\theta_1 B)\,\varepsilon_t \tag{21}
 $$
 
-::: {.callout-tip}
-**Exercise:** Write the estimated equations for ARIMA(1,1,0) and ARIMA(2,1,2) using
-the coefficient values from `report()`.
+::: callout-tip
+**Exercise:** Write the estimated equations for ARIMA(1,1,0) and ARIMA(2,1,2) using the coefficient values from `report()`.
 :::
 
----
+------------------------------------------------------------------------
 
 ## Stage 3 — Model Validation (Non-Seasonal)
 
@@ -727,11 +700,10 @@ $$
 
 approximately $\chi^2$ with $(h - p - q)$ degrees of freedom.
 
-- $H_0$: Residuals are white noise
-- $H_1$: Residuals are not white noise
+-   $H_0$: Residuals are white noise
+-   $H_1$: Residuals are not white noise
 
-If $p$-value $> 0.05$ → fail to reject $H_0$ → residuals are white noise → model is
-well-specified.
+If $p$-value $> 0.05$ → fail to reject $H_0$ → residuals are white noise → model is well-specified.
 
 ```{r}
 #| label: ljungbox-nonseasonal
@@ -794,26 +766,23 @@ The model with the lowest AIC/BIC is selected as the best model.
 
 ### Parameter Redundancy
 
-When two ARMA models produce the same series, they exhibit **parameter redundancy**.
-For example, a white noise process $y_t = \varepsilon_t$ can be rewritten as:
+When two ARMA models produce the same series, they exhibit **parameter redundancy**. For example, a white noise process $y_t = \varepsilon_t$ can be rewritten as:
 
 $$
 y_t = -0.5\,y_{t-1} + \varepsilon_t + 0.5\,\varepsilon_{t-1} \tag{26}
 $$
 
-which superficially resembles ARMA(1,1) but is not a genuinely different model.
-Always inspect ACF/PACF diagnostics to avoid over-parameterisation.
+which superficially resembles ARMA(1,1) but is not a genuinely different model. Always inspect ACF/PACF diagnostics to avoid over-parameterisation.
 
----
+------------------------------------------------------------------------
 
 ## Stage 4 — Model Application: Forecasting (Non-Seasonal)
 
 ### Three Steps for Point Forecasts
 
-1. Expand the ARIMA equation so that $y_t$ is on the left-hand side.
-2. Rewrite replacing $t$ with $T + h$.
-3. On the right-hand side: replace **future observations** with their forecasts,
-   **future errors** with zero, and **past errors** with corresponding residuals.
+1.  Expand the ARIMA equation so that $y_t$ is on the left-hand side.
+2.  Rewrite replacing $t$ with $T + h$.
+3.  On the right-hand side: replace **future observations** with their forecasts, **future errors** with zero, and **past errors** with corresponding residuals.
 
 **Example: ARIMA(1,1,1) forecast derivation**
 
@@ -829,8 +798,7 @@ $$
 \hat{y}_{T+1|T} = (1 + \hat\phi_1)\,y_T - \hat\phi_1\,y_{T-1} + \hat\theta_1\,\varepsilon_T \tag{28}
 $$
 
-**Two-step-ahead forecast** ($\varepsilon_{T+2} = \varepsilon_{T+1} = 0$,
-replace $y_{T+1}$ with $\hat{y}_{T+1|T}$):
+**Two-step-ahead forecast** ($\varepsilon_{T+2} = \varepsilon_{T+1} = 0$, replace $y_{T+1}$ with $\hat{y}_{T+1|T}$):
 
 $$
 \hat{y}_{T+2|T} = (1 + \hat\phi_1)\,\hat{y}_{T+1|T} - \hat\phi_1\,y_T \tag{29}
@@ -840,32 +808,30 @@ The process continues for all future periods $h = 3, 4, \ldots$
 
 ### Forecast Exercise
 
-::: {.callout-note icon=false}
+::: {.callout-note icon="false"}
 ## Exercise
 
-The price of S&P 500 futures (daily data, 190 observations, April 1 – December 31,
-2025) was fitted with an ARIMA(2,1,1) model, producing the following output.
+The price of S&P 500 futures (daily data, 190 observations, April 1 – December 31, 2025) was fitted with an ARIMA(2,1,1) model, producing the following output.
 
 **Model coefficients:**
 
-| | ar1 | ar2 | ma1 |
-|:--|:---:|:---:|:---:|
-| Estimate | 0.6848 | 0.0219 | −0.7805 |
-| Std. Error | 0.2093 | 0.0947 | 0.1924 |
+|            |  ar1   |  ar2   |   ma1   |
+|:-----------|:------:|:------:|:-------:|
+| Estimate   | 0.6848 | 0.0219 | −0.7805 |
+| Std. Error | 0.2093 | 0.0947 | 0.1924  |
 
 **Last three observations (fitted values and residuals):**
 
 | Time | Price ($y_t$) | Fitted ($\hat{y}_t$) | Residual ($\varepsilon_t$) |
-|:-----|------:|-------:|-------:|
+|:---|---:|---:|---:|
 | Dec 29, 2025 (obs 188) | 6,979.25 | 6,973.62 | 5.63 |
 | Dec 30, 2025 (obs 189) | 6,955.00 | 6,973.10 | −18.10 |
 | Dec 31, 2025 (obs 190) | 6,944.25 | 6,952.45 | −8.20 |
 
-**Prove that the S&P 500 forecast for January 1, 2026 (obs 191) and January 2, 2026
-(obs 192) are 6,942.76 and 6,941.50 respectively.**
+**Prove that the S&P 500 forecast for January 1, 2026 (obs 191) and January 2, 2026 (obs 192) are 6,942.76 and 6,941.50 respectively.**
 :::
 
-::: {.callout-tip icon=false collapse=true}
+::: {.callout-tip icon="false" collapse="true"}
 ## Answer
 
 **Step 1 — Expand the ARIMA(2,1,1) equation**
@@ -897,10 +863,9 @@ y_t = 1.6848\,y_{t-1} - 0.6629\,y_{t-2} - 0.0219\,y_{t-3}
       + \varepsilon_t - 0.7805\,\varepsilon_{t-1}
 $$
 
-**Step 2 — One-step-ahead forecast: $\hat{y}_{191|190}$ (January 1, 2026)**
+**Step 2 — One-step-ahead forecast:** $\hat{y}_{191|190}$ (January 1, 2026)
 
-Substitute $t = T+1 = 191$. Set $\varepsilon_{T+1} = 0$ (future error unknown); replace
-past errors with residuals ($\varepsilon_T = -8.20$):
+Substitute $t = T+1 = 191$. Set $\varepsilon_{T+1} = 0$ (future error unknown); replace past errors with residuals ($\varepsilon_T = -8.20$):
 
 $$
 \hat{y}_{191} = 1.6848\,y_{190} - 0.6629\,y_{189} - 0.0219\,y_{188}
@@ -920,10 +885,9 @@ $$
 \boxed{\hat{y}_{191} = 6{,}942.76}
 $$
 
-**Step 3 — Two-step-ahead forecast: $\hat{y}_{192|190}$ (January 2, 2026)**
+**Step 3 — Two-step-ahead forecast:** $\hat{y}_{192|190}$ (January 2, 2026)
 
-Substitute $t = T+2 = 192$. Set $\varepsilon_{T+2} = \varepsilon_{T+1} = 0$; replace
-$y_{T+1}$ with $\hat{y}_{191} = 6{,}942.76$:
+Substitute $t = T+2 = 192$. Set $\varepsilon_{T+2} = \varepsilon_{T+1} = 0$; replace $y_{T+1}$ with $\hat{y}_{191} = 6{,}942.76$:
 
 $$
 \hat{y}_{192} = 1.6848\,\hat{y}_{191} - 0.6629\,y_{190} - 0.0219\,y_{189}
@@ -961,24 +925,22 @@ m211_full |>
   theme_ts()
 ```
 
----
+------------------------------------------------------------------------
 
 # Box-Jenkins: Seasonal ARIMA (SARIMA)
 
-We now apply the full Box-Jenkins procedure to the **Malaysia IPI Manufacturing Index**
-(monthly, January 2015 to November 2025) — a series with both trend and seasonality.
+We now apply the full Box-Jenkins procedure to the **Malaysia IPI Manufacturing Index** (monthly, January 2015 to November 2025) — a series with both trend and seasonality.
 
 ## Stage 1 — Model Identification (SARIMA)
 
 The steps for SARIMA identification are:
 
-1. Check for stationarity. If stationary → ARMA.
-2. If not stationary, check for seasonality.
-3. If seasonal → seasonal differencing: $z_t = y_t - y_{t-s}$.
-4. If $z_t$ still not stationary → regular differencing: $w_t = z_t - z_{t-1}$.
-5. Confirm stationarity with ADF test.
-6. Determine $p$, $q$ (from ACF/PACF of $w_t$ at low lags) and $P$, $Q$
-   (from ACF/PACF at seasonal lags).
+1.  Check for stationarity. If stationary → ARMA.
+2.  If not stationary, check for seasonality.
+3.  If seasonal → seasonal differencing: $z_t = y_t - y_{t-s}$.
+4.  If $z_t$ still not stationary → regular differencing: $w_t = z_t - z_{t-1}$.
+5.  Confirm stationarity with ADF test.
+6.  Determine $p$, $q$ (from ACF/PACF of $w_t$ at low lags) and $P$, $Q$ (from ACF/PACF at seasonal lags).
 
 ### Data and Partition
 
@@ -1026,8 +988,7 @@ ggAcf(sest, lag.max = 48) +
 adf.test(sest)
 ```
 
-Even if the ADF test indicates stationarity, the sinusoidal ACF pattern indicates a
-**seasonal component** — proceed with seasonal differencing.
+Even if the ADF test indicates stationarity, the sinusoidal ACF pattern indicates a **seasonal component** — proceed with seasonal differencing.
 
 ### Step 3: Seasonal Differencing
 
@@ -1058,8 +1019,7 @@ adf.test(zt)
 
 ### Step 4: Regular Differencing (if needed)
 
-If the ADF test on $z_t$ still fails to reject $H_0$ ($p > 0.05$), apply a
-further first-order difference:
+If the ADF test on $z_t$ still fails to reject $H_0$ ($p > 0.05$), apply a further first-order difference:
 
 ```{r}
 #| label: fig-regular-diff
@@ -1103,18 +1063,18 @@ grid.arrange(p_acf_w, p_pacf_w, ncol = 2)
 
 **Reading the plots:**
 
-| Plot | Significant spike location | Interpretation |
-|:----:|:--------------------------|:---------------|
-| ACF  | Lag 1 (non-seasonal) | MA(1) → $q = 1$ |
-| ACF  | Lag 12 (seasonal) | SMA(1) → $Q = 1$ |
-| PACF | Lag 1 (non-seasonal) | AR(1) → $p = 1$ |
-| PACF | Lag 12 (seasonal) | SAR(1) → $P = 1$ |
+| Plot | Significant spike location | Interpretation   |
+|:----:|:---------------------------|:-----------------|
+| ACF  | Lag 1 (non-seasonal)       | MA(1) → $q = 1$  |
+| ACF  | Lag 12 (seasonal)          | SMA(1) → $Q = 1$ |
+| PACF | Lag 1 (non-seasonal)       | AR(1) → $p = 1$  |
+| PACF | Lag 12 (seasonal)          | SAR(1) → $P = 1$ |
 
 **Suggested model:** SARIMA$(1,1,1)(1,1,1)_{12}$
 
 Competing models: SARIMA$(2,1,2)(1,1,1)_{12}$ and SARIMA$(1,1,0)(1,1,1)_{12}$
 
----
+------------------------------------------------------------------------
 
 ## Stage 2 — Model Estimation (SARIMA)
 
@@ -1133,21 +1093,21 @@ smodel3 <- sest_tbl |> model(ARIMA(value ~ pdq(1,1,0) + PDQ(1,1,1)))
 report(smodel1)
 ```
 
-**Estimated equation for SARIMA$(1,1,1)(1,1,1)_{12}$:**
+**Estimated equation for SARIMA**$(1,1,1)(1,1,1)_{12}$:
 
 $$
 (1 - \hat\phi_1 B)(1 - B)(1 - \hat\Phi_1 B^{12})(1 - B^{12})\,y_t
 = (1 + \hat\theta_1 B)(1 + \hat\Theta_1 B^{12})\,\varepsilon_t \tag{30}
 $$
 
-::: {.callout-tip}
+::: callout-tip
 **Exercise:** Write the estimated equations for:
 
-1. SARIMA$(2,1,2)(1,1,1)_{12}$
-2. SARIMA$(1,1,0)(1,1,1)_{12}$
+1.  SARIMA$(2,1,2)(1,1,1)_{12}$
+2.  SARIMA$(1,1,0)(1,1,1)_{12}$
 :::
 
----
+------------------------------------------------------------------------
 
 ## Stage 3 — Model Validation (SARIMA)
 
@@ -1185,9 +1145,8 @@ Both are approximately $\chi^2$ distributed with $(h - p - q)$ degrees of freedo
 
 **How many lags to use:**
 
-- General rule: use $h = \sqrt{n}$ (e.g., $n=100 \Rightarrow h=10$)
-- Seasonal models: use $h = 2m$ where $m$ is the seasonal period
-  (e.g., monthly $m=12 \Rightarrow h=24$)
+-   General rule: use $h = \sqrt{n}$ (e.g., $n=100 \Rightarrow h=10$)
+-   Seasonal models: use $h = 2m$ where $m$ is the seasonal period (e.g., monthly $m=12 \Rightarrow h=24$)
 
 ```{r}
 #| label: ljungbox-sarima
@@ -1220,8 +1179,7 @@ lb_results$Conclusion <- ifelse(lb_results$p_value > 0.05,
 print(lb_results)
 ```
 
-All models that pass the Ljung-Box test are candidate models. Select the best using
-AIC/BIC:
+All models that pass the Ljung-Box test are candidate models. Select the best using AIC/BIC:
 
 ```{r}
 #| label: sarima-aic-bic
@@ -1238,12 +1196,11 @@ bind_rows(
 
 The model with the **lowest AIC, AICc, and BIC** is selected as the best model.
 
----
+------------------------------------------------------------------------
 
 ## Stage 4 — Model Application: Forecasting (SARIMA)
 
-Use the best model (refitted to the full IPI series) to generate a 12-step-ahead
-forecast:
+Use the best model (refitted to the full IPI series) to generate a 12-step-ahead forecast:
 
 ```{r}
 #| label: fig-sarima-forecast
@@ -1263,14 +1220,14 @@ best_sarima |>
   theme_ts()
 ```
 
----
+------------------------------------------------------------------------
 
 # Summary
 
 ## Box-Jenkins Methodology — Four Stages
 
 | Stage | Task | Tools |
-|:-----:|:-----|:------|
+|:--:|:---|:---|
 | **1 — Identification** | Determine $p$, $d$, $q$ (and $P$, $D$, $Q$ for seasonal) | Time series plot, ACF, PACF, ADF test |
 | **2 — Estimation** | Estimate model parameters | OLS, Maximum Likelihood (R: `ARIMA()`) |
 | **3 — Validation** | Confirm residuals are white noise; select best model | Ljung-Box test, AIC, AICc, BIC |
@@ -1278,31 +1235,28 @@ best_sarima |>
 
 ## ACF and PACF — Quick Reference
 
-| | ACF | PACF |
-|:--|:--:|:---:|
-| **AR($p$)** | Tails off | Cuts off after lag $p$ |
-| **MA($q$)** | Cuts off after lag $q$ | Tails off |
-| **ARMA($p$,$q$)** | Tails off | Tails off |
+|   | ACF | PACF |
+|:---|:--:|:--:|
+| **AR(**$p$) | Tails off | Cuts off after lag $p$ |
+| **MA(**$q$) | Cuts off after lag $q$ | Tails off |
+| **ARMA(**$p$,$q$) | Tails off | Tails off |
 | **Non-stationary** | Slow decay | Large at lag 1 |
 | **Seasonal** | Peaks at seasonal lags ($s$, $2s$, ...) | Peaks at seasonal lags |
 
 ## Information Criteria Summary
 
 | Criterion | Formula | Penalty |
-|:----------|:-------:|:-------:|
+|:---|:--:|:--:|
 | AIC | $-2\log(L) + 2k$ | Moderate |
 | AICc | $\text{AIC} + \dfrac{2k(k+1)}{T-k-1}$ | Moderate (small sample correction) |
 | BIC | $-2\log(L) + k\log(T)$ | Stronger (grows with $T$) |
 
-where $k = p + q + $ (1 if constant included, else 0).
+where \$k = p + q + \$ (1 if constant included, else 0).
 
----
+------------------------------------------------------------------------
 
 # References
 
-- Mohd Alias Lazim (2013). *Introductory Business Forecasting: A Practical Approach*
-  (3rd ed.). UPENA, UiTM. ISBN: 978-983-3643.
-- Hyndman, R.J. and Athanasopoulos, G. (2018). *Forecasting: Principles and Practice*
-  (2nd ed.). OTexts. Available at <https://otexts.com/fpp2/>.
-- Department of Statistics Malaysia. Industrial Production Index data retrieved from
-  <https://open.dosm.gov.my/data-catalogue>.
+-   Mohd Alias Lazim (2013). *Introductory Business Forecasting: A Practical Approach* (3rd ed.). UPENA, UiTM. ISBN: 978-983-3643.
+-   Hyndman, R.J. and Athanasopoulos, G. (2018). *Forecasting: Principles and Practice* (2nd ed.). OTexts. Available at <https://otexts.com/fpp2/>.
+-   Department of Statistics Malaysia. Industrial Production Index data retrieved from <https://open.dosm.gov.my/data-catalogue>.
