@@ -1409,7 +1409,7 @@ F-statistic: 269.6 on 8 and 44 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1    -0.002775646      1.853213   0.168
+   1    -0.002775646      1.853213   0.136
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -1530,7 +1530,7 @@ F-statistic: 307.4 on 7 and 45 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1      0.03327008      1.751804   0.084
+   1      0.03327008      1.751804   0.074
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -1648,7 +1648,7 @@ F-statistic: 365.1 on 6 and 46 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1      0.04457492      1.745045   0.122
+   1      0.04457492      1.745045   0.088
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -1763,7 +1763,7 @@ F-statistic: 447.1 on 5 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1      0.05141295      1.734915    0.11
+   1      0.05141295      1.734915   0.108
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -1877,7 +1877,7 @@ F-statistic: 570.8 on 4 and 48 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1      0.05149487      1.734734   0.156
+   1      0.05149487      1.734734   0.134
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -1989,7 +1989,7 @@ F-statistic: 529.2 on 3 and 49 DF,  p-value: &lt; 2.2e-16</code></pre>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code> lag Autocorrelation D-W Statistic p-value
-   1     -0.06392779      1.755684     0.2
+   1     -0.06392779      1.755684   0.234
  Alternative hypothesis: rho != 0</code></pre>
 </div>
 <details class="code-fold">
@@ -2280,11 +2280,18 @@ Table&nbsp;2: Summary of all models in the General-to-Specific procedure
 <div aria-describedby="tbl-model-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
 <table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 35%">
+<col style="width: 21%">
+<col style="width: 15%">
+<col style="width: 15%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Model</th>
 <th style="text-align: left;">Change from Previous</th>
-<th style="text-align: left;">Adj. R²</th>
+<th style="text-align: left;">Adj. R&lt;U+00B2&gt;</th>
 <th style="text-align: left;">DW p-value</th>
 <th style="text-align: left;">BP p-value</th>
 </tr>
@@ -2299,44 +2306,44 @@ Table&nbsp;2: Summary of all models in the General-to-Specific procedure
 </tr>
 <tr class="even">
 <td style="text-align: left;">Model 2</td>
-<td style="text-align: left;">— (add lag1)</td>
+<td style="text-align: left;">&lt;U+2014&gt; (add lag1)</td>
 <td style="text-align: left;">0.9764</td>
-<td style="text-align: left;">0.144</td>
+<td style="text-align: left;">0.152</td>
 <td style="text-align: left;">0.020</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Model 3</td>
 <td style="text-align: left;">GDP removed</td>
 <td style="text-align: left;">0.9763</td>
-<td style="text-align: left;">0.066</td>
+<td style="text-align: left;">0.078</td>
 <td style="text-align: left;">0.044</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Model 4</td>
 <td style="text-align: left;">Income removed</td>
 <td style="text-align: left;">0.9768</td>
-<td style="text-align: left;">0.110</td>
+<td style="text-align: left;">0.098</td>
 <td style="text-align: left;">0.039</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Model 5</td>
 <td style="text-align: left;">Total Population removed</td>
 <td style="text-align: left;">0.9772</td>
-<td style="text-align: left;">0.114</td>
+<td style="text-align: left;">0.136</td>
 <td style="text-align: left;">0.033</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Model 6</td>
 <td style="text-align: left;">CPI removed</td>
 <td style="text-align: left;">0.9777</td>
-<td style="text-align: left;">0.154</td>
+<td style="text-align: left;">0.112</td>
 <td style="text-align: left;">0.018</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Model 7</td>
 <td style="text-align: left;">Total Export removed</td>
 <td style="text-align: left;">0.9682</td>
-<td style="text-align: left;">0.200</td>
+<td style="text-align: left;">0.212</td>
 <td style="text-align: left;">0.220</td>
 </tr>
 </tbody>
