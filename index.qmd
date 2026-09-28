@@ -62,7 +62,7 @@ install.packages(c(
 
 | Package | Used in | Purpose |
 |:--------|:-------:|:--------|
-| `forecast`, `fpp2` | C1–C5 | Forecasting models and plots |
+| `forecast`, `fpp3` | C1–C5 | Forecasting models and plots |
 | `TSA` | C1 | Intervention analysis |
 | `tseries` | C4, C5 | ADF unit-root test |
 | `fable`, `feasts`, `tsibble` | C5 | Tidyverse time series modelling |
