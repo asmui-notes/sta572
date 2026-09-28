@@ -44,7 +44,7 @@ All analysis in this course is performed in **R**. Install all required packages
 ```r
 install.packages(c(
   # Core time series
-  "forecast", "fpp2", "TSA", "tseries",
+  "forecast", "fpp3", "TSA", "tseries",
   # Tidyverse-style time series (Chapter 5)
   "fable", "feasts", "tsibble",
   # Data manipulation
