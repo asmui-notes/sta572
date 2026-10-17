@@ -274,7 +274,25 @@ const pages = [
   <div class="step"><div class="no">1</div><div>Click cell <kbd>C3</kbd>, type <code>=B2</code> and press <kbd>Enter</kbd>.</div></div>
   <div class="step"><div class="no">2</div><div>Select <kbd>C3</kbd>, grab the small square at the cell's bottom-right (the <strong>fill handle</strong>) and <strong>drag down to C7</strong> &mdash; Excel auto-shifts the reference to <code>=B3, =B4, &hellip;</code></div></div>
   <div class="step"><div class="no">3</div><div>The 2024 forecast is <code>=B7</code> (last actual). MSE cell: <code>=AVERAGE(D3:D7)</code>.</div></div>
-  <div class="note"><strong>Naive with Trend</strong> &mdash; in D3 type <code>=B2*(B2/B1)</code>&hellip; but it needs <em>two</em> prior values, so the first usable cell is <code>C4 =B3*(B3/B2)</code>, then drag down. Forecast 2024: <code>=B7*(B7/B6)</code>.</div>
+
+  <h3>Naive with Trend</h3>
+  <p>Carry the last growth rate forward: <strong>F<sub>t</sub> = y<sub>t&minus;1</sub> &times; (y<sub>t&minus;1</sub> / y<sub>t&minus;2</sub>)</strong>. It needs <em>two</em> prior values, so the first forecast is in <strong>C4</strong>.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>C4</span><code>=B3*(B3/B2)</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B</th><th>C (Trend F<sub>t</sub>)</th><th>D (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=B3*(B3/B2)</td><td class="fx">=(B4-C4)^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4*(B4/B3)</td><td class="fx">=(B5-C5)^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=B5*(B5/B4)</td><td class="fx">=(B6-C6)^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=B6*(B6/B5)</td><td class="fx">=(B7-C7)^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=B7*(B7/B6)</td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="2" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(D4:D7)</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div>Leave <kbd>C2</kbd> and <kbd>C3</kbd> blank &mdash; there is no 2017 value to form the first ratio.</div></div>
+  <div class="step"><div class="no">2</div><div>In <kbd>C4</kbd> type <code>=B3*(B3/B2)</code>, then grab the <strong>fill handle</strong> and <strong>drag down to C7</strong>; the references shift automatically.</div></div>
+  <div class="step"><div class="no">3</div><div>Forecast 2024 in <kbd>C8</kbd>: <code>=B7*(B7/B6)</code>. MSE uses the valid rows only: <code>=AVERAGE(D4:D7)</code>.</div></div>
+  <div class="note">Because the ratio multiplies, the forecast climbs when <code>B7 &gt; B6</code> (up-trend) and falls when <code>B7 &lt; B6</code> (down-trend) &mdash; this method reacts <strong>strongly</strong> to the most recent change.</div>
 `},
 
 { kind:'wordsearch', title:'Word Search' },
@@ -340,10 +358,31 @@ const pages = [
   </table>
 `},
 
+{ kind:'note', title:'Weighted Average Derivation', html:`
+  <span class="tag">Section 4a</span>
+  <h2>&#8721; Weighted Average Interpretation &mdash; Recursive Derivation</h2>
+  <p>Start from the one-step-ahead SES forecast:</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)F<sub>t</sub> &nbsp;&nbsp;&nbsp;(1)</div>
+  <p>The same rule one step earlier gives:</p>
+  <div class="formula">F<sub>t</sub> = &alpha;y<sub>t&minus;1</sub> + (1&minus;&alpha;)F<sub>t&minus;1</sub> &nbsp;&nbsp;&nbsp;(2)</div>
+  <p>Substitute (2) into (1):</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)[&alpha;y<sub>t&minus;1</sub> + (1&minus;&alpha;)F<sub>t&minus;1</sub>]<br>
+  F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + (1&minus;&alpha;)&sup2;F<sub>t&minus;1</sub> &nbsp;&nbsp;&nbsp;(3)</div>
+  <p>Now expand F<sub>t&minus;1</sub> the same way:</p>
+  <div class="formula">F<sub>t&minus;1</sub> = &alpha;y<sub>t&minus;2</sub> + (1&minus;&alpha;)F<sub>t&minus;2</sub> &nbsp;&nbsp;&nbsp;(4)</div>
+  <p>Substitute (4) into (3):</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + (1&minus;&alpha;)&sup3;F<sub>t&minus;2</sub></div>
+  <p>Continuing the substitution for F<sub>t&minus;2</sub>, F<sub>t&minus;3</sub>, &hellip; gives the <strong>final weighted-average form</strong>:</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + &hellip; + &alpha;(1&minus;&alpha;)<sup>t&minus;1</sup>y<sub>1</sub> + (1&minus;&alpha;)<sup>t</sup>F<sub>1</sub></div>
+  <p>So F<sub>t+1</sub> is a <strong>weighted average of all past observations</strong> y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;, y<sub>1</sub> with weights:</p>
+  <div class="formula">&alpha;, &nbsp; &alpha;(1&minus;&alpha;), &nbsp; &alpha;(1&minus;&alpha;)&sup2;, &nbsp; &hellip;, &nbsp; &alpha;(1&minus;&alpha;)<sup>t&minus;1</sup>, &nbsp; (1&minus;&alpha;)<sup>t</sup></div>
+  <div class="note">These weights add up to 1, and each is <strong>(1&minus;&alpha;)</strong> times the one before it &mdash; which is exactly what produces the <strong>damping effect</strong> on the next page.</div>
+`},
+
 { kind:'note', title:'Damping & α Effect', html:`
   <span class="tag">Section 4b</span>
   <h2>&#128201; The Damping Effect &amp; choosing &alpha;</h2>
-  <p>Unrolling the SES recursion shows that <strong>F<sub>t+1</sub> is a weighted average of every past value</strong>, with weights that shrink as you go back in time:</p>
+  <p>From the derivation on the previous page, <strong>F<sub>t+1</sub> is a weighted average of every past value</strong>, with weights that shrink as you go back in time:</p>
   <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + &hellip; + (1&minus;&alpha;)<sup>t</sup>F<sub>1</sub></div>
   <p>Each step back multiplies the weight by <strong>(1&minus;&alpha;)</strong>, so the weights fall off <strong>exponentially</strong> &mdash; this is the <strong>damping effect</strong>. The most recent value always carries the <strong>largest</strong> weight.</p>
 
@@ -715,6 +754,64 @@ F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"
 { kind:'excelquiz', title:'Excel Formula Challenge' },
 
 { kind:'crossword', title:'Crossword' },
+
+{ kind:'note', title:'Calculating MSE', html:`
+  <span class="tag">Section 8</span>
+  <h2>&#128208; Calculating MSE &mdash; how many terms count?</h2>
+  <p>The <strong>Mean Squared Error</strong> measures accuracy over the fitted period:</p>
+  <div class="formula">MSE = (1/n) &Sigma; (y<sub>t</sub> &minus; F<sub>t</sub>)&sup2; = (1/n) &Sigma; e<sub>t</sub>&sup2;</div>
+  <p>The tricky part is <strong>n</strong> &mdash; how many squared errors you actually have. Not every row produces one.</p>
+
+  <h3>The rules</h3>
+  <div class="step"><div class="no">1</div><div>Form the error <code>e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></code> <strong>only on rows that have a forecast</strong>.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Skip rows with no forecast.</strong> Early periods that lack enough history are blank &mdash; e.g. Average Change needs two past changes, so its first few rows have no F<sub>t</sub>.</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Skip the initialisation seed.</strong> In SES and ARRES the first value <code>F<sub>1</sub> = y<sub>1</sub></code> is a seed, not a real forecast, so its error is not counted.</div></div>
+  <div class="step"><div class="no">4</div><div>Set <strong>n = the number of valid squared errors</strong> and divide by that n &mdash; <em>not</em> by the total sample size.</div></div>
+
+  <h3>n for each method &mdash; annual price example (6 observations, 2018&ndash;2023)</h3>
+  <div class="ssbox"><table class="ss">
+    <tr><th>Method</th><th>First forecast</th><th>Rows dropped</th><th>n (errors)</th></tr>
+    <tr><td>Naive</td><td>2019</td><td>1 (no prior for 2018)</td><td class="fx">5</td></tr>
+    <tr><td>Naive with Trend</td><td>2020</td><td>2 (needs 2 priors)</td><td class="fx">4</td></tr>
+    <tr><td>Average Change</td><td>2021</td><td>3 (needs 2 changes)</td><td class="fx">3</td></tr>
+    <tr><td>Average % Change</td><td>2021</td><td>3 (needs 2 changes)</td><td class="fx">3</td></tr>
+    <tr><td>SES</td><td>2019</td><td>1 (seed F&#8321; excluded)</td><td class="fx">5</td></tr>
+    <tr><td>DES</td><td>2019</td><td>1</td><td class="fx">5</td></tr>
+    <tr><td>Holt's</td><td>2019</td><td>1</td><td class="fx">5</td></tr>
+    <tr><td>ARRES</td><td>2019</td><td>1 (seed excluded)</td><td class="fx">5</td></tr>
+    <tr><td>Holt-Winters *</td><td>quarterly data</td><td>0</td><td class="fx">8</td></tr>
+  </table></div>
+
+  <div class="warn"><strong>Fair comparison rule:</strong> only compare MSE values computed on the <strong>same series over the same periods</strong>. Holt-Winters (marked *) needs seasonal data, so it runs on a different quarterly set (n = 8) &mdash; its MSE is <strong>not</strong> directly comparable with the annual methods.</div>
+  <div class="note">In Excel the divisor is handled for you: <code>=AVERAGE(D4:D7)</code> averages only the range you point at, so pick the range that starts at the <strong>first valid error</strong> row. In R, use <code>mean(e2, na.rm = TRUE)</code> to drop the NA rows automatically.</div>
+`},
+
+{ kind:'note', title:'Method Comparison', html:`
+  <span class="tag">Section 9</span>
+  <h2>&#127942; Method Comparison &amp; Picking the Best</h2>
+  <p>All methods below are fitted to the <strong>same series</strong> &mdash; the annual price data (6, 8, 9, 12, 15, 16 for 2018&ndash;2023) &mdash; so their MSE values are directly comparable. Each uses the textbook parameters.</p>
+  <div class="ssbox"><table class="ss">
+    <tr><th>Method</th><th>Trend?</th><th>Seasonal?</th><th>Multi-step?</th><th>n</th><th>MSE</th></tr>
+    <tr><td>Naive (benchmark)</td><td>No</td><td>No</td><td>No</td><td>5</td><td class="fx">4.800</td></tr>
+    <tr><td>Naive with Trend</td><td>Yes</td><td>No</td><td>No</td><td>4</td><td class="fx">3.714</td></tr>
+    <tr><td>Average Change</td><td>No</td><td>No</td><td>No</td><td>3</td><td class="fx">2.417</td></tr>
+    <tr><td>Average % Change</td><td>No</td><td>No</td><td>No</td><td>3</td><td class="fx">4.111</td></tr>
+    <tr><td>SES (&alpha;=0.8)</td><td>No</td><td>No</td><td>No</td><td>5</td><td class="fx">6.616</td></tr>
+    <tr><td>DES (&alpha;=0.8)</td><td>Yes</td><td>No</td><td>Yes</td><td>5</td><td class="fx">2.227</td></tr>
+    <tr style="background:#dff3e8"><td><b>Holt's (&alpha;=0.6, &beta;=0.2)</b></td><td><b>Yes</b></td><td>No</td><td><b>Yes</b></td><td><b>5</b></td><td class="fx"><b>0.724 &#10003;</b></td></tr>
+    <tr><td>ARRES (&beta;=0.2)</td><td>No</td><td>No</td><td>No</td><td>5</td><td class="fx">4.800</td></tr>
+    <tr><td>Holt-Winters *</td><td>Yes</td><td>Yes</td><td>Yes</td><td>&mdash;</td><td class="fx">different data</td></tr>
+  </table></div>
+  <p class="small">* Holt-Winters needs a seasonal series, so it is <strong>not</strong> run on this annual data and its MSE is not comparable here.</p>
+
+  <h3>How to select the best method</h3>
+  <div class="step"><div class="no">1</div><div><strong>Match the method to the data pattern.</strong> Plot the series first: is there a trend? seasonality? Do you need forecasts more than one step ahead? Rule out methods that cannot capture what you see.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Fit the candidates and compare an error measure</strong> (MSE, MAPE or MAE) &mdash; ideally on a <strong>hold-out / evaluation set</strong>, not just the fitting period. Lowest error wins.</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Beat the benchmark.</strong> Any chosen method should have a lower error than the <strong>Naive</strong> forecast; if it doesn't, keep Naive.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>Favour the simpler model</strong> when two methods give similar error (parsimony), and make sure the MSE values were computed on the <strong>same series and periods</strong>.</div></div>
+
+  <div class="note"><strong>Verdict for this example:</strong> the series rises steadily (a clear <em>upward trend</em>, no seasonality), so the trend methods win. <strong>Holt's method</strong> gives the lowest MSE (0.724) &mdash; well below the Naive benchmark (4.800) &mdash; making it the <strong>best choice</strong> here. SES does worst because it has no trend term and lags a rising series.</div>
+`},
 
 { kind:'note', title:'Summary', html:`
   <span class="tag">Wrap up</span>
