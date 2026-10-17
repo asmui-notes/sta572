@@ -1,0 +1,1256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C2 Interactive Notes — Univariate Modelling</title>
+<style>
+  :root{
+    --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2733; --muted:#5b6778;
+    --brand:#4f46e5; --brand2:#d73027; --accent:#1b9e77; --line:#dcdcf0;
+    --good:#1b9e77; --bad:#d73027; --chip:#eef2fb; --shadow:0 6px 24px rgba(30,50,90,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       background:var(--bg);color:var(--ink);line-height:1.55}
+  header{background:linear-gradient(120deg,#4f46e5,#3730a3);color:#fff;padding:18px 20px;
+         position:sticky;top:0;z-index:20;box-shadow:var(--shadow)}
+  header h1{margin:0;font-size:1.15rem;letter-spacing:.2px}
+  header .sub{opacity:.85;font-size:.82rem;margin-top:2px}
+  .wrap{max-width:900px;margin:0 auto;padding:16px}
+  .progress{height:6px;background:rgba(255,255,255,.25);border-radius:6px;margin-top:12px;overflow:hidden}
+  .progress > i{display:block;height:100%;background:#c3bdf5;width:0;transition:width .3s}
+  .page{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px 22px 26px;
+        box-shadow:var(--shadow);display:none;animation:fade .35s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .page h2{color:var(--brand);margin:.1rem 0 .4rem;font-size:1.35rem}
+  .page h3{margin:1.1rem 0 .3rem;font-size:1.05rem;color:#223}
+  .tag{display:inline-block;background:var(--chip);color:var(--brand);font-size:.72rem;
+       padding:3px 10px;border-radius:999px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+  .formula{background:#f7f9fd;border:1px solid var(--line);border-left:4px solid var(--brand);
+           padding:10px 14px;border-radius:8px;margin:10px 0;font-family:"Cambria Math",Georgia,serif;
+           font-size:1.05rem;overflow-x:auto}
+  .note{background:#eef7f3;border-left:4px solid var(--accent);padding:10px 14px;border-radius:8px;margin:10px 0;font-size:.95rem}
+  .warn{background:#fdefe9;border-left:4px solid var(--brand2);padding:10px 14px;border-radius:8px;margin:10px 0;font-size:.95rem}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.92rem}
+  th,td{border:1px solid var(--line);padding:7px 9px;text-align:left}
+  th{background:#eef2fb;color:#223}
+  ul{margin:.4rem 0 .4rem 1.1rem;padding:0}
+  li{margin:3px 0}
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
+  button.btn{background:var(--brand);color:#fff;border:0;padding:10px 18px;border-radius:10px;
+       font-size:.95rem;font-weight:600;cursor:pointer;transition:.15s}
+  button.btn:hover{filter:brightness(1.08)}
+  button.btn:disabled{opacity:.4;cursor:not-allowed}
+  button.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+  .dots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+  .dot{width:11px;height:11px;border-radius:50%;background:#c7d2e6;cursor:pointer;border:0}
+  .dot.active{background:var(--brand);transform:scale(1.25)}
+  .dot.activity{background:#f0b84a}
+  .dot.activity.active{background:#e08a00}
+
+  /* ---- Word search ---- */
+  .wsgrid{display:grid;gap:3px;justify-content:center;margin:12px 0;user-select:none;touch-action:none}
+  .wscell{width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+          background:#fff;border:1px solid var(--line);border-radius:6px;font-weight:700;
+          font-size:.9rem;cursor:pointer;color:#223}
+  .wscell.sel{background:#ffe8a3}
+  .wscell.found{background:#bfe6d4;border-color:var(--good);color:#0c5}
+  .wordlist{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+  .word{background:var(--chip);padding:5px 12px;border-radius:999px;font-size:.85rem;font-weight:600}
+  .word.done{background:#bfe6d4;text-decoration:line-through;color:#0a6}
+
+  /* ---- Drag words ---- */
+  .bank{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;padding:10px;background:#f7f9fd;
+        border:1px dashed var(--line);border-radius:10px;min-height:46px}
+  .chip{background:var(--brand);color:#fff;padding:7px 13px;border-radius:999px;font-weight:600;
+        cursor:grab;font-size:.9rem;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+  .chip.used{opacity:.3;pointer-events:none}
+  .blank{display:inline-block;min-width:120px;border-bottom:2px dashed var(--brand);
+         padding:2px 8px;margin:0 2px;text-align:center;color:var(--brand);font-weight:700;vertical-align:middle;border-radius:6px}
+  .blank.over{background:#ffe8a3}
+  .blank.ok{background:#bfe6d4;border-bottom-color:var(--good);color:#0a6}
+  .blank.no{background:#fdd;border-bottom-color:var(--bad);color:var(--bad)}
+  .dragsent{margin:10px 0;font-size:1rem;line-height:2.2}
+
+  /* ---- Crossword ---- */
+  .cw-wrap{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+  .cwgrid{display:grid;gap:2px;background:#223;padding:2px;border-radius:6px}
+  .cwcell{width:32px;height:32px;position:relative;background:#223}
+  .cwcell.block{background:#223}
+  .cwcell input{width:100%;height:100%;border:0;text-align:center;font-weight:700;font-size:1rem;
+                text-transform:uppercase;background:#fff;color:#223;padding:0}
+  .cwcell input:focus{outline:2px solid var(--brand);background:#fff6d9}
+  .cwcell input.ok{background:#bfe6d4}
+  .cwcell .num{position:absolute;top:0;left:1px;font-size:.55rem;color:#555;font-weight:700}
+  .clues{flex:1;min-width:240px;font-size:.9rem}
+  .clues h4{margin:.3rem 0}
+  .clues ol{margin:.2rem 0 .6rem 1.2rem;padding:0}
+  .feedback{margin-top:10px;font-weight:700}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .small{font-size:.9rem;color:var(--muted)}
+
+  /* ---- Excel spreadsheet mock ---- */
+  .ssbox{overflow-x:auto;margin:12px 0;border:1px solid #cfd6e4;border-radius:8px}
+  table.ss{border-collapse:collapse;font-family:"Segoe UI",Calibri,Arial,sans-serif;font-size:.85rem;min-width:420px;margin:0}
+  table.ss th,table.ss td{border:1px solid #d4d9e2;padding:4px 8px;text-align:center;background:#fff;height:26px;white-space:nowrap}
+  table.ss th{background:#217346;color:#fff;font-weight:600}           /* excel green header */
+  table.ss td.rh{background:#f2f4f8;color:#555;font-weight:700;width:34px} /* row header */
+  table.ss td.val{background:#eef7f1}
+  table.ss td.fx{background:#fff7e6;font-family:"Consolas","SF Mono",monospace;color:#7a4b00;text-align:left}
+  .fbar{display:flex;align-items:center;gap:8px;background:#f7f9fd;border:1px solid var(--line);
+        border-radius:8px;padding:6px 10px;margin:10px 0;font-family:"Consolas","SF Mono",monospace;font-size:.9rem}
+  .fbar .fx-ico{background:#217346;color:#fff;font-style:italic;font-weight:700;border-radius:4px;padding:1px 7px}
+  .fbar code{color:#7a4b00}
+  .step{display:flex;gap:10px;margin:8px 0}
+  .step .no{flex:0 0 26px;height:26px;border-radius:50%;background:var(--brand);color:#fff;
+            display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem}
+  kbd{background:#eef2fb;border:1px solid #cdd6ea;border-bottom-width:2px;border-radius:5px;padding:1px 6px;
+      font-family:"Consolas",monospace;font-size:.82rem;color:#223}
+  .exq{background:#f7f9fd;border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:12px 0}
+  .exq .q{font-weight:600;margin-bottom:6px}
+  .exq input{width:100%;font-family:"Consolas",monospace;font-size:.95rem;padding:8px 10px;
+             border:1px solid #cdd6ea;border-radius:8px}
+  .exq input.ok{border-color:var(--good);background:#eef7f1}
+  .exq input.no{border-color:var(--bad);background:#fdecec}
+  .exq .hint{font-size:.82rem;color:var(--muted);margin-top:4px}
+
+  /* ---- R code block ---- */
+  .rbox{background:#1e2530;border-radius:10px;margin:12px 0;overflow:hidden;box-shadow:var(--shadow)}
+  .rbox .rbar{background:#2b3442;color:#cfe3ff;font-size:.74rem;padding:5px 12px;font-weight:600;
+              letter-spacing:.3px;display:flex;align-items:center;gap:7px}
+  .rbox .rbar::before{content:"";width:10px;height:10px;border-radius:50%;background:#5aa0ff;box-shadow:16px 0 0 #6fd08c}
+  .rbox .rcopy{margin-left:auto;background:#3a4556;color:#cfe3ff;border:1px solid #4a586b;border-radius:6px;
+               font-size:.72rem;font-weight:600;letter-spacing:.3px;padding:3px 11px;cursor:pointer;transition:.15s}
+  .rbox .rcopy:hover{background:#4a586b;color:#fff}
+  .rbox .rcopy.done{background:#1b9e77;border-color:#1b9e77;color:#fff}
+  .rbox pre{margin:0;padding:12px 14px;overflow-x:auto;color:#e6ebf2;
+            font-family:"Consolas","SF Mono",Menlo,monospace;font-size:.84rem;line-height:1.55}
+  .rbox .cm{color:#7f93a8;font-style:italic}      /* comment */
+  .rbox .fn{color:#7ec8ff}                          /* function */
+  .rbox .st{color:#b5e8a0}                          /* string */
+  .rbox .nm{color:#ffd48a}                          /* number */
+  .rbox .kw{color:#ff9ec4}                          /* keyword */
+  .rout{background:#f3f5f9;border-left:4px solid #8aa0bd;border-radius:0 8px 8px 0;
+        font-family:"Consolas",monospace;font-size:.82rem;color:#2a3442;padding:9px 12px;margin:0 0 12px;white-space:pre-wrap}
+
+  /* ---- Weight bars (damping) ---- */
+  .wbar{display:flex;align-items:center;gap:10px;margin:5px 0}
+  .wbar .wlab{flex:0 0 46px;font-family:"Cambria Math",Georgia,serif;font-size:.9rem;color:var(--muted);text-align:right}
+  .wbar i{display:block;height:18px;background:linear-gradient(90deg,#4f46e5,#9b95f2);border-radius:5px;min-width:3px}
+  .wbar b{font-family:"Consolas",monospace;font-size:.82rem;color:var(--ink)}
+
+  /* ---- Student identity bar ---- */
+  .idbar{display:flex;flex-wrap:wrap;gap:10px;background:#eef2fb;border:1px solid var(--line);
+         border-radius:10px;padding:10px 12px;margin:0 0 14px}
+  .idbar label{display:flex;flex-direction:column;font-size:.72rem;font-weight:700;color:var(--brand);
+               text-transform:uppercase;letter-spacing:.3px;gap:3px;flex:1;min-width:120px}
+  .idbar input{font-size:.92rem;padding:7px 9px;border:1px solid #cdd6ea;border-radius:7px;font-weight:400;
+               color:var(--ink);text-transform:none;letter-spacing:normal}
+  .idbar input:focus{outline:2px solid var(--brand);border-color:var(--brand)}
+
+  /* ---- Print / PDF results sheet ---- */
+  #printArea{display:none}
+  @media print{
+    header,.nav,.dots,.progress{display:none !important}
+    body{background:#fff}
+    .page{display:none !important}
+    .wrap{max-width:100%;padding:0}
+    #printArea{display:block !important;padding:6px}
+    #printArea .pr-title{font-size:1.3rem;color:#1b4b8f;margin:0 0 4px;font-weight:700}
+    #printArea .pr-meta{border:1px solid #333;border-radius:8px;padding:10px 12px;margin:10px 0;
+                        display:grid;grid-template-columns:1fr 1fr;gap:4px 18px;font-size:.95rem}
+    #printArea .pr-meta b{color:#000}
+    #printArea .pr-score{font-size:1.1rem;font-weight:700;margin:12px 0;color:#0a5}
+    #printArea ol,#printArea ul{margin:6px 0 6px 1.3rem}
+    #printArea li{margin:3px 0;font-size:.95rem}
+    #printArea code{font-family:"Consolas",monospace;background:#eee;padding:1px 4px;border-radius:4px}
+    #printArea table.pg{border-collapse:collapse;margin:8px 0}
+    #printArea table.pg td{border:1px solid #333;width:26px;height:26px;text-align:center;font-weight:700}
+    #printArea table.pg td.bk{background:#333}
+    #printArea .pr-note{font-size:.8rem;color:#555;margin-top:16px;border-top:1px solid #ccc;padding-top:6px}
+  }
+  @media(max-width:520px){.wscell{width:26px;height:26px;font-size:.8rem}.cwcell{width:28px;height:28px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>STA572 · Chapter 2 — Univariate Modelling Techniques</h1>
+  <div class="sub">Interactive study notes · navigate page by page · play the activities</div>
+  <div class="progress"><i id="bar"></i></div>
+</header>
+
+<div class="wrap">
+  <div id="pages"></div>
+  <div class="nav">
+    <button class="btn ghost" id="prev">&larr; Back</button>
+    <span class="small" id="counter"></span>
+    <button class="btn" id="next">Next &rarr;</button>
+  </div>
+  <div class="dots" id="dots"></div>
+</div>
+<div id="printArea"></div>
+
+<script>
+/* ============================================================
+   PAGE CONTENT
+   ============================================================ */
+const pages = [
+{ kind:'note', title:'Welcome', html:`
+  <span class="tag">Start here</span>
+  <h2>How to use these notes</h2>
+  <p>This is Chapter 2 of STA572 turned into a <strong>page-by-page interactive workbook</strong>. Read each notes page, then test yourself on the activity pages (marked with <span style="color:#e08a00;font-weight:700">orange dots</span> below).</p>
+  <table>
+    <tr><th>Activity</th><th>What you do</th></tr>
+    <tr><td>&#128269; Word Search</td><td>Click &amp; drag across letters to find hidden method names.</td></tr>
+    <tr><td>&#9995; Drag the Words</td><td>Drag terms into the blanks to complete the key statements.</td></tr>
+    <tr><td>&#129513; Crossword</td><td>Type answers from the clues about Chapter 2 concepts.</td></tr>
+  </table>
+  <div class="note"><strong>Univariate models</strong> use information from the <em>past values</em> of a single variable to forecast its future values.</div>
+`},
+
+{ kind:'note', title:'Introduction', html:`
+  <span class="tag">Section 1</span>
+  <h2>Introduction to Univariate Models</h2>
+  <p><strong>Univariate models</strong> require only <strong>one variable</strong> to be formulated. They use past values of a variable to forecast its future values.</p>
+  <div class="warn"><strong>Disadvantage:</strong> Univariate techniques cannot explain the <em>causes</em> of change — they describe <em>what</em> happened, not <em>why</em>.</div>
+  <h3>Methods covered in this chapter</h3>
+  <table>
+    <tr><th>Method</th><th>Best for</th></tr>
+    <tr><td>Naive Forecast</td><td>No pattern; benchmark</td></tr>
+    <tr><td>Naive with Trend</td><td>Slow, steady trend</td></tr>
+    <tr><td>Average Change</td><td>Short series, consistent changes</td></tr>
+    <tr><td>Average Percent Change</td><td>Constant percentage growth</td></tr>
+    <tr><td>Single Exponential Smoothing</td><td>Stable series, no trend</td></tr>
+    <tr><td>Double Exponential Smoothing</td><td>Linear trend, short series</td></tr>
+    <tr><td>Holt's Method</td><td>Linear trend, flexible</td></tr>
+    <tr><td>ARRES</td><td>Time-varying alpha</td></tr>
+    <tr><td>Holt-Winters</td><td>Trend + seasonality</td></tr>
+    <tr><td>Decomposition</td><td>Clear trend + seasonal</td></tr>
+  </table>
+`},
+
+{ kind:'note', title:'Naive Methods', html:`
+  <span class="tag">Section 2</span>
+  <h2>Naive Methods</h2>
+  <h3>Naive Forecast</h3>
+  <p>Belief: <strong>what happens today will happen again tomorrow.</strong></p>
+  <div class="formula">F<sub>t+m</sub> = y<sub>t</sub></div>
+  <ul>
+    <li>Best when the series has <strong>no discernible pattern</strong>.</li>
+    <li>Performs well with <strong>slow change</strong> in fluctuations.</li>
+    <li>Sudden changes severely hurt accuracy.</li>
+    <li>Serves as a <strong>benchmark</strong> — others should beat it.</li>
+  </ul>
+  <h3>Naive with Trend</h3>
+  <p>Modified to account for the <strong>trend component</strong>.</p>
+  <div class="formula">F<sub>t+1</sub> = y<sub>t</sub> &times; (y<sub>t</sub> / y<sub>t&minus;1</sub>)</div>
+  <table>
+    <tr><th>Condition</th><th>Interpretation</th></tr>
+    <tr><td>y<sub>t</sub> &gt; y<sub>t&minus;1</sub></td><td>Upward trend</td></tr>
+    <tr><td>y<sub>t</sub> &lt; y<sub>t&minus;1</sub></td><td>Downward trend</td></tr>
+  </table>
+  <div class="note">This method is <strong>highly sensitive</strong> to changes in actual values.</div>
+`},
+
+{ kind:'note', title:'Excel: Naive Methods', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Inserting Naive formulas in Excel</h2>
+  <p>Worked example — price (RM) for 2018&ndash;2023. Type the <strong>year</strong> in column A and <strong>price</strong> in column B, then build the forecast in column C.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>C3</span><code>=B2</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B</th><th>C (Naive F<sub>t</sub>)</th><th>D (e&sup2;)</th></tr>
+    <tr><td class="rh">1</td><td>Year</td><td>Price</td><td>Forecast</td><td>Sq. Error</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=B2</td><td class="fx">=(B3-C3)^2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=B3</td><td class="fx">=(B4-C4)^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4</td><td class="fx">=(B5-C5)^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=B5</td><td class="fx">=(B6-C6)^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=B6</td><td class="fx">=(B7-C7)^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=B7</td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="2" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(D3:D7)</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div>Click cell <kbd>C3</kbd>, type <code>=B2</code> and press <kbd>Enter</kbd>.</div></div>
+  <div class="step"><div class="no">2</div><div>Select <kbd>C3</kbd>, grab the small square at the cell's bottom-right (the <strong>fill handle</strong>) and <strong>drag down to C7</strong> &mdash; Excel auto-shifts the reference to <code>=B3, =B4, &hellip;</code></div></div>
+  <div class="step"><div class="no">3</div><div>The 2024 forecast is <code>=B7</code> (last actual). MSE cell: <code>=AVERAGE(D3:D7)</code>.</div></div>
+  <div class="note"><strong>Naive with Trend</strong> &mdash; in D3 type <code>=B2*(B2/B1)</code>&hellip; but it needs <em>two</em> prior values, so the first usable cell is <code>C4 =B3*(B3/B2)</code>, then drag down. Forecast 2024: <code>=B7*(B7/B6)</code>.</div>
+`},
+
+{ kind:'wordsearch', title:'Word Search' },
+
+{ kind:'note', title:'Methods of Averages', html:`
+  <span class="tag">Section 3</span>
+  <h2>Methods of Averages</h2>
+  <h3>Average Change</h3>
+  <p>Forecast = current value <strong>plus the average of absolute changes</strong>.</p>
+  <div class="formula">F<sub>t+m</sub> = y<sub>t</sub> + [ (y<sub>t</sub>&minus;y<sub>t&minus;1</sub>) + (y<sub>t&minus;1</sub>&minus;y<sub>t&minus;2</sub>) ] / 2</div>
+  <ul>
+    <li>Responds quickly to changes; less influenced by old data.</li>
+    <li>Best when changes are of <strong>similar size</strong>.</li>
+    <li>Good for <strong>short / intermediate</strong> series.</li>
+  </ul>
+  <h3>Average Percent Change</h3>
+  <p>Uses average percentage change instead of absolute change.</p>
+  <div class="formula">F<sub>t+m</sub> = y<sub>t</sub> + [ avg of percent changes ] &times; y<sub>t</sub></div>
+  <div class="warn">May be unsuitable <strong>beyond one or two periods</strong> due to compounding effects.</div>
+`},
+
+{ kind:'note', title:'Excel: Averages', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Average Change &amp; Percent Change in Excel</h2>
+  <p>Both need <strong>two previous changes</strong>, so the first forecast appears a few rows down.</p>
+  <h3>Average Change</h3>
+  <div class="fbar"><span class="fx-ico">fx</span><span>C5</span><code>=B4+((B4-B3)+(B3-B2))/2</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B</th><th>C (Avg Change F<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>&mdash;</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td>&mdash;</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4+((B4-B3)+(B3-B2))/2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=B5+((B5-B4)+(B4-B3))/2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=B6+((B6-B5)+(B5-B4))/2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=B7+((B7-B6)+(B6-B5))/2</td></tr>
+  </table></div>
+  <h3>Average Percent Change</h3>
+  <p>Replace absolute changes with percentage changes:</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>C5</span><code>=B4*(1+(((B4-B3)/B3)+((B3-B2)/B2))/2)</code></div>
+  <div class="step"><div class="no">1</div><div>Type the formula in the first usable cell, then <strong>drag the fill handle down</strong> to copy it.</div></div>
+  <div class="warn">Average Percent Change compounds &mdash; avoid forecasting more than <strong>one or two periods</strong> ahead.</div>
+`},
+
+{ kind:'note', title:'Single Exp. Smoothing', html:`
+  <span class="tag">Section 4</span>
+  <h2>Single Exponential Smoothing (SES)</h2>
+  <p>Also called <strong>simple exponential smoothing</strong>. Needs only one parameter &alpha;.</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha; y<sub>t</sub> + (1&minus;&alpha;) F<sub>t</sub>,&nbsp;&nbsp; 0 &le; &alpha; &le; 1</div>
+  <ul>
+    <li>Takes into account the <strong>most recent forecast</strong>.</li>
+    <li>Needs only a <strong>limited amount of data</strong>.</li>
+  </ul>
+  <div class="warn"><strong>Disadvantage:</strong> cannot forecast more than <strong>one step ahead</strong>.</div>
+  <h3>Weighted-average view</h3>
+  <p>F<sub>t+1</sub> is a weighted average of all past values with weights &alpha;, &alpha;(1&minus;&alpha;), &alpha;(1&minus;&alpha;)&sup2;, &hellip; that <strong>decrease exponentially</strong> (the <strong>damping</strong> effect).</p>
+  <div class="note"><strong>Larger &alpha;</strong> &rarr; faster damping, past loses influence quickly. <strong>Smaller &alpha;</strong> &rarr; slower damping, more historical influence.</div>
+  <h3>Choosing &alpha;</h3>
+  <table>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td>Subjective</td><td>Near 1 for rapidly changing data; small for stable series</td></tr>
+    <tr><td>Objective</td><td>Minimise MSE / MAPE / MAE over the estimation set</td></tr>
+  </table>
+`},
+
+{ kind:'note', title:'Damping & α Effect', html:`
+  <span class="tag">Section 4b</span>
+  <h2>&#128201; The Damping Effect &amp; choosing &alpha;</h2>
+  <p>Unrolling the SES recursion shows that <strong>F<sub>t+1</sub> is a weighted average of every past value</strong>, with weights that shrink as you go back in time:</p>
+  <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + &hellip; + (1&minus;&alpha;)<sup>t</sup>F<sub>1</sub></div>
+  <p>Each step back multiplies the weight by <strong>(1&minus;&alpha;)</strong>, so the weights fall off <strong>exponentially</strong> &mdash; this is the <strong>damping effect</strong>. The most recent value always carries the <strong>largest</strong> weight.</p>
+
+  <div class="note"><strong>Larger &alpha;</strong> &rarr; faster damping &rarr; the past is forgotten quickly (reacts fast). <strong>Smaller &alpha;</strong> &rarr; slower damping &rarr; the past keeps influence longer (smoother).</div>
+
+  <h3>&alpha; = 0.8 &mdash; fast damping</h3>
+  <p>Weights: <code>0.8, 0.16, 0.032, 0.0064, 0.00128</code> for y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;</p>
+  <div class="wbar"><span class="wlab">y&#8348;</span><i style="width:100%"></i><b>0.800</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8321;</span><i style="width:20%"></i><b>0.160</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8322;</span><i style="width:4%"></i><b>0.032</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8323;</span><i style="width:0.8%"></i><b>0.006</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8324;</span><i style="width:0.16%"></i><b>0.001</b></div>
+  <p class="small">Past t&minus;3 the weight is almost zero &mdash; only the last few observations matter.</p>
+
+  <h3>&alpha; = 0.2 &mdash; slow damping</h3>
+  <p>Weights: <code>0.2, 0.16, 0.128, 0.1024, 0.082</code> for y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;</p>
+  <div class="wbar"><span class="wlab">y&#8348;</span><i style="width:100%"></i><b>0.200</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8321;</span><i style="width:80%"></i><b>0.160</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8322;</span><i style="width:64%"></i><b>0.128</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8323;</span><i style="width:51%"></i><b>0.102</b></div>
+  <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8324;</span><i style="width:41%"></i><b>0.082</b></div>
+  <p class="small">The weights diminish slowly, so many past periods still contribute. (Bars are scaled to each &alpha;'s own first weight.)</p>
+
+  <table>
+    <tr><th>&alpha;</th><th>Behaviour</th></tr>
+    <tr><td>Near 1</td><td>Reacts quickly; heavy weight on the latest value; fast damping; good for rapidly changing data</td></tr>
+    <tr><td>Near 0</td><td>Smooth; weights diminish slowly; more historical influence; good for stable series</td></tr>
+  </table>
+
+  <h3>vs a 3-period Moving Average</h3>
+  <div class="formula">&#375;<sub>2</sub> = (y<sub>1</sub> + y<sub>2</sub> + y<sub>3</sub>) / 3 = &#8531;y<sub>1</sub> + &#8531;y<sub>2</sub> + &#8531;y<sub>3</sub></div>
+  <p>A moving average uses <strong>equal</strong> weights (&#8531; each) and ignores whether a value is recent or old &mdash; unlike SES, which always favours the most recent observation.</p>
+
+  <h3>How to choose &alpha;</h3>
+  <table>
+    <tr><th>Method</th><th>Description</th></tr>
+    <tr><td><strong>Subjective</strong></td><td>Pick near 1 for fast-changing data, small for stable series</td></tr>
+    <tr><td><strong>Objective</strong></td><td>Search for the &alpha; that <strong>minimises MSE / MAPE / MAE</strong> over the estimation set (e.g. Excel Solver, or R's <code>ses()</code>)</td></tr>
+  </table>
+`},
+
+{ kind:'note', title:'Excel: SES', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Single Exponential Smoothing in Excel</h2>
+  <p>Put &alpha; in its own cell and lock it with <strong>\$ (absolute reference)</strong> &mdash; press <kbd>F4</kbd> after clicking the cell to add the \$ signs &mdash; so dragging the fill handle never moves it. Here <kbd>E1 = &alpha; = 0.8</kbd>.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>C3</span><code>=\$E\$1*B2+(1-\$E\$1)*C2</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B</th><th>C (SES F<sub>t</sub>)</th><th>D</th><th>E</th></tr>
+    <tr><td class="rh">1</td><td>Year</td><td>Price</td><td>Forecast</td><td>&alpha; =</td><td class="val">0.8</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td></td><td></td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B2+(1-\$E\$1)*C2</td><td></td><td></td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*C3</td><td></td><td></td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*C4</td><td></td><td></td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><kbd>C2</kbd> is the initial value: <code>=B2</code>.</div></div>
+  <div class="step"><div class="no">2</div><div><kbd>C3</kbd>: <code>=\$E\$1*B2+(1-\$E\$1)*C2</code> &mdash; the <code>\$E\$1</code> stays fixed when you <strong>drag down</strong>.</div></div>
+  <div class="step"><div class="no">3</div><div>Optimise &alpha; with <strong>Data &rarr; Solver</strong>: set the MSE cell to <em>Minimum</em> by changing <code>E1</code>, limits <code>0 &le; E1 &le; 1</code>.</div></div>
+  <div class="note">SES forecasts <strong>one step ahead only</strong> &mdash; the 2024 forecast is just the next <code>C</code> value.</div>
+`},
+
+{ kind:'dragwords', title:'Drag the Words' },
+
+{ kind:'note', title:'DES, Holt & ARRES', html:`
+  <span class="tag">Section 5</span>
+  <h2>Trend Methods</h2>
+  <h3>Double Exponential Smoothing (DES)</h3>
+  <p>For series with a <strong>linear trend</strong>; gives <strong>multi-step-ahead</strong> forecasts.</p>
+  <div class="formula">S<sub>t</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)S<sub>t&minus;1</sub> &nbsp;|&nbsp; S'<sub>t</sub> = &alpha;S<sub>t</sub> + (1&minus;&alpha;)S'<sub>t&minus;1</sub><br>a<sub>t</sub> = 2S<sub>t</sub> &minus; S'<sub>t</sub> &nbsp;|&nbsp; b<sub>t</sub> = [&alpha;/(1&minus;&alpha;)](S<sub>t</sub>&minus;S'<sub>t</sub>) &nbsp;|&nbsp; F<sub>t+m</sub> = a<sub>t</sub> + b<sub>t</sub>&middot;m</div>
+  <h3>Holt's Method</h3>
+  <p>Linear trend with <strong>two</strong> smoothing constants: level (&alpha;) and slope (&beta;).</p>
+  <div class="formula">L<sub>t</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)(L<sub>t&minus;1</sub>+T<sub>t&minus;1</sub>)<br>T<sub>t</sub> = &beta;(L<sub>t</sub>&minus;L<sub>t&minus;1</sub>) + (1&minus;&beta;)T<sub>t&minus;1</sub><br>F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub>&middot;m</div>
+  <h3>ARRES</h3>
+  <p><strong>Adaptive Response Rate Exponential Smoothing</strong> — &alpha; <strong>adapts each period</strong> from the ratio of smoothed error to smoothed absolute error.</p>
+  <div class="formula">&alpha;<sub>t</sub> = | E<sub>t</sub> / AE<sub>t</sub> |,&nbsp; e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></div>
+`},
+
+{ kind:'note', title:'Excel: DES', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Double Exponential Smoothing in Excel</h2>
+  <p>Smooth <strong>twice</strong> (S<sub>t</sub> then S'<sub>t</sub>), build the level <strong>a<sub>t</sub></strong> and slope <strong>b<sub>t</sub></strong>, then forecast &mdash; this one <strong>handles a linear trend and multi-step</strong> forecasts. Lock &alpha; in <kbd>I1</kbd> with <strong>\$</strong>.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>S  C3</span><code>=\$I\$1*B3+(1-\$I\$1)*C2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>S' D3</span><code>=\$I\$1*C3+(1-\$I\$1)*D2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>a  E3</span><code>=2*C3-D3</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>b  F3</span><code>=(\$I\$1/(1-\$I\$1))*(C3-D3)</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>F  G4</span><code>=E3+F3*1</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (S<sub>t</sub>)</th><th>D (S'<sub>t</sub>)</th><th>E (a<sub>t</sub>)</th><th>F (b<sub>t</sub>)</th><th>G (F<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B2</td><td class="fx">=2*C2-D2</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C2-D2)</td><td></td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$I\$1*B3+(1-\$I\$1)*C2</td><td class="fx">=\$I\$1*C3+(1-\$I\$1)*D2</td><td class="fx">=2*C3-D3</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C3-D3)</td><td class="fx">=E2+F2*1</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$I\$1*B4+(1-\$I\$1)*C3</td><td class="fx">=\$I\$1*C4+(1-\$I\$1)*D3</td><td class="fx">=2*C4-D4</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C4-D4)</td><td class="fx">=E3+F3*1</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><strong>Initialise row 2:</strong> <code>C2=B2</code> and <code>D2=B2</code>.</div></div>
+  <div class="step"><div class="no">2</div><div>Enter the five formulas in row 3, then <strong>select C3:G3 and drag the fill handle down</strong>.</div></div>
+  <div class="step"><div class="no">3</div><div>The forecast sits <strong>one row down</strong> (uses last period's a and b): <code>G4 =E3+F3*1</code>. For <strong>m steps ahead</strong> change <code>*1</code> to <code>*m</code>.</div></div>
+`},
+
+{ kind:'note', title:'Excel: Holt', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Holt&rsquo;s Method in Excel</h2>
+  <p>Holt uses <strong>two</strong> locked constants: <kbd>E1 = &alpha;</kbd> (level) and <kbd>E2 = &beta;</kbd> (trend). Keep a Level column (C) and a Trend column (D).</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Level C3</span><code>=\$E\$1*B3+(1-\$E\$1)*(C2+D2)</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Trend D3</span><code>=\$E\$2*(C3-C2)+(1-\$E\$2)*D2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Forecast E3</span><code>=C2+D2</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (F<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B3-B2</td><td></td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*(C2+D2)</td><td class="fx">=\$E\$2*(C3-C2)+(1-\$E\$2)*D2</td><td class="fx">=C2+D2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*(C3+D3)</td><td class="fx">=\$E\$2*(C4-C3)+(1-\$E\$2)*D3</td><td class="fx">=C3+D3</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><strong>Initialise row 2:</strong> level <code>C2=B2</code>, trend <code>D2=B3-B2</code> (first slope).</div></div>
+  <div class="step"><div class="no">2</div><div>Enter the Level and Trend formulas in row 3, then <strong>select C3:D3 and drag down</strong>.</div></div>
+  <div class="step"><div class="no">3</div><div>Forecast is <code>=C+D</code> one step, or <code>=C3+D3*m</code> for <strong>m steps ahead</strong>.</div></div>
+`},
+
+{ kind:'note', title:'Excel: ARRES', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; ARRES in Excel</h2>
+  <p>ARRES lets &alpha; <strong>change every period</strong>. You track five helper columns. Put &beta; in its own locked cell (here <kbd>I1 = 0.2</kbd>); the starting &alpha; goes in <kbd>G2 = 0.6</kbd>.</p>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B</th><th>C (F<sub>t</sub>)</th><th>D (e<sub>t</sub>)</th><th>E (E<sub>t</sub>)</th><th>F (AE<sub>t</sub>)</th><th>G (&alpha;<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0.6</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=G2*B2+(1-G2)*C2</td><td class="fx">=B3-C3</td><td class="fx">=\$I\$1*D3+(1-\$I\$1)*E2</td><td class="fx">=\$I\$1*ABS(D3)+(1-\$I\$1)*F2</td><td class="fx">=IF(F3=0,0,ABS(E3/F3))</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=G3*B3+(1-G3)*C3</td><td class="fx">=B4-C4</td><td class="fx">=\$I\$1*D4+(1-\$I\$1)*E3</td><td class="fx">=\$I\$1*ABS(D4)+(1-\$I\$1)*F3</td><td class="fx">=IF(F4=0,0,ABS(E4/F4))</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><strong>Row 2 is initialisation:</strong> <code>C2=B2</code>, and <code>D2=E2=F2=0</code>, <code>G2=0.6</code>.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Forecast</strong> <code>C3 =G2*B2+(1-G2)*C2</code> &mdash; note it uses the <em>previous</em> &alpha; in <code>G2</code>, not a fixed cell.</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Error</strong> <code>D3 =B3-C3</code>; <strong>smoothed error</strong> <code>E3 =\$I\$1*D3+(1-\$I\$1)*E2</code>; <strong>smoothed abs. error</strong> <code>F3 =\$I\$1*ABS(D3)+(1-\$I\$1)*F2</code>.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>New &alpha;</strong> <code>G3 =IF(F3=0,0,ABS(E3/F3))</code>. Now <strong>select C3:G3 and drag the fill handle down</strong> &mdash; every row updates its own &alpha;.</div></div>
+  <div class="note"><code>ABS(...)</code> gives the absolute value; <code>IF(F3=0,0,...)</code> avoids dividing by zero on the first active row.</div>
+`},
+
+{ kind:'note', title:'Holt-Winters & Decomposition', html:`
+  <span class="tag">Section 6</span>
+  <h2>Seasonal Methods</h2>
+  <h3>Holt-Winters</h3>
+  <p>Best when a <strong>seasonal component exists</strong>. Uses three constants: level &alpha;, trend &beta;, season &gamma;. Season length s = 4 (quarterly) or s = 12 (monthly).</p>
+  <table>
+    <tr><th>Model</th><th>Forecast</th></tr>
+    <tr><td>Multiplicative</td><td>F<sub>t+m</sub> = (L<sub>t</sub> + T<sub>t</sub>&middot;m) &times; S<sub>t&minus;s+m</sub></td></tr>
+    <tr><td>Additive</td><td>F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub>&middot;m + S<sub>t&minus;s+m</sub></td></tr>
+  </table>
+  <h3>Decomposition Forecasting</h3>
+  <p>Assumes <strong>past patterns repeat</strong>. Suitable for data with both <strong>trend and seasonal</strong> components (cyclical and irregular excluded).</p>
+  <table>
+    <tr><th>Relationship</th><th>Forecast</th></tr>
+    <tr><td>Multiplicative</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></td></tr>
+    <tr><td>Additive</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></td></tr>
+  </table>
+  <h3>Decomposition forecasting &mdash; the 3 steps</h3>
+  <div class="step"><div class="no">1</div><div><strong>Compute the trend</strong> (T&#770;<sub>t</sub>) by fitting a linear regression on the time index, or by a moving average.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Compute the seasonal indices</strong> (S<sub>t</sub>) using ratio-to-moving-average (see the worked example next).</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Combine</strong> trend and seasonal to forecast: <code>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></code> (multiplicative) or <code>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></code> (additive).</div></div>
+`},
+
+{ kind:'note', title:'Seasonal Component', html:`
+  <span class="tag">Section 7</span>
+  <h2>&#128197; Calculating the Seasonal Component</h2>
+  <p>Seasonal indices measure how each season sits <strong>relative to the trend</strong>. The standard method is <strong>ratio-to-moving-average</strong>. The season length is <strong>s = 4</strong> for quarterly data and <strong>s = 12</strong> for monthly data.</p>
+
+  <h3>The four steps</h3>
+  <table>
+    <tr><th>Step</th><th>Quarterly (s = 4)</th><th>Monthly (s = 12)</th></tr>
+    <tr><td><b>1.</b> Trend</td><td>Centered <b>4</b>-quarter moving average (2&times;4 CMA)</td><td>Centered <b>12</b>-month moving average (2&times;12 CMA)</td></tr>
+    <tr><td><b>2.</b> Ratio</td><td colspan="2">Ratio = actual &divide; CMA &nbsp;(<em>multiplicative</em>) &nbsp;or&nbsp; actual &minus; CMA &nbsp;(<em>additive</em>)</td></tr>
+    <tr><td><b>3.</b> Average</td><td>Average the ratios of all Q1s, all Q2s, &hellip;</td><td>Average the ratios of all Jans, all Febs, &hellip;</td></tr>
+    <tr><td><b>4.</b> Normalise</td><td>Scale so the 4 indices sum to <b>400%</b> (avg = 100)</td><td>Scale so the 12 indices sum to <b>1200%</b> (avg = 100)</td></tr>
+  </table>
+  <div class="note">An <strong>even</strong> season length (4 or 12) needs a <strong>centered</strong> MA: average two consecutive moving averages so the trend lines up with an actual period.</div>
+
+  <h3>Step 4 — the normalisation (worked)</h3>
+  <p>Suppose the <strong>unadjusted</strong> quarterly ratio-averages came out as:</p>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
+    <tr><td class="rh">Unadjusted avg</td><td class="val">0.70</td><td class="val">1.02</td><td class="val">1.08</td><td class="val">1.24</td><td class="val">4.04</td></tr>
+    <tr><td class="rh">&times; factor 4&divide;4.04</td><td>0.693</td><td>1.010</td><td>1.069</td><td>1.228</td><td>4.000</td></tr>
+    <tr><td class="rh">Seasonal Index (&times;100)</td><td class="fx">69.3</td><td class="fx">101.0</td><td class="fx">106.9</td><td class="fx">122.8</td><td class="fx">400.0</td></tr>
+  </table></div>
+  <div class="formula">Adjustment factor = s &divide; (sum of unadjusted averages) = 4 &divide; 4.04 = 0.9901</div>
+  <p class="small">For <strong>monthly</strong> data the factor is <code>12 &divide; (sum of the 12 averages)</code>, and the indices sum to <strong>1200</strong>. For an <strong>additive</strong> model you <em>subtract</em> the mean instead, so the indices sum to <strong>0</strong>.</p>
+
+  <h3>In Excel</h3>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Ratio</span><code>=B2/CMA2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Q-average</span><code>=AVERAGEIF(\$Quarter,"Q1",\$Ratio)</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Index</span><code>=Qavg*(4/SUM(Qavg_range))*100</code></div>
+  <p class="small">For monthly data use <code>AVERAGEIF</code> on the month column and the factor <code>12/SUM(...)</code>.</p>
+
+  <h3>In R</h3>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Quarterly: frequency = 4   |   Monthly: frequency = 12</span>
+y <span class="kw">&lt;-</span> <span class="fn">ts</span>(sales, start = <span class="fn">c</span>(<span class="nm">2021</span>, <span class="nm">1</span>), frequency = <span class="nm">4</span>)
+
+d <span class="kw">&lt;-</span> <span class="fn">decompose</span>(y, type = <span class="st">"multiplicative"</span>)
+d$seasonal          <span class="cm"># the seasonal index for every period</span>
+d$figure            <span class="cm"># the s unique seasonal indices (length 4 or 12)</span>
+
+<span class="fn">monthplot</span>(y)        <span class="cm"># visualise the seasonal pattern</span></pre></div>
+  <div class="note"><code>decompose()</code> does exactly these four steps for you; <code>d$figure</code> returns the per-season indices (4 values for quarterly, 12 for monthly).</div>
+`},
+
+{ kind:'note', title:'Worked Seasonal Example', html:`
+  <span class="tag">Section 7 · worked example</span>
+  <h2>&#128221; Seasonal Indices &mdash; step by step</h2>
+  <p>Quarterly sales ('000) for 3 years. We will find the four seasonal indices by <strong>ratio-to-moving-average</strong>.</p>
+
+  <h3>Step 1 &mdash; the data</h3>
+  <div class="ssbox"><table class="ss">
+    <tr><th>t</th><th>Year</th><th>Qtr</th><th>y</th><th>t</th><th>Year</th><th>Qtr</th><th>y</th></tr>
+    <tr><td>1</td><td>2021</td><td>Q1</td><td class="val">20</td><td>7</td><td>2022</td><td>Q3</td><td class="val">52</td></tr>
+    <tr><td>2</td><td>2021</td><td>Q2</td><td class="val">30</td><td>8</td><td>2022</td><td>Q4</td><td class="val">26</td></tr>
+    <tr><td>3</td><td>2021</td><td>Q3</td><td class="val">48</td><td>9</td><td>2023</td><td>Q1</td><td class="val">28</td></tr>
+    <tr><td>4</td><td>2021</td><td>Q4</td><td class="val">22</td><td>10</td><td>2023</td><td>Q2</td><td class="val">38</td></tr>
+    <tr><td>5</td><td>2022</td><td>Q1</td><td class="val">24</td><td>11</td><td>2023</td><td>Q3</td><td class="val">56</td></tr>
+    <tr><td>6</td><td>2022</td><td>Q2</td><td class="val">34</td><td>12</td><td>2023</td><td>Q4</td><td class="val">30</td></tr>
+  </table></div>
+
+  <h3>Step 2 &mdash; 4-quarter moving total &amp; average</h3>
+  <p>Add every <strong>4 consecutive</strong> values; divide by 4. Because 4 is even, each average falls <em>between</em> two quarters.</p>
+  <div class="ssbox"><table class="ss">
+    <tr><th>Window</th><th>Sum of 4</th><th>&divide; 4 = MA</th></tr>
+    <tr><td>t1&ndash;t4</td><td>20+30+48+22 = 120</td><td class="fx">30.0</td></tr>
+    <tr><td>t2&ndash;t5</td><td>30+48+22+24 = 124</td><td class="fx">31.0</td></tr>
+    <tr><td>t3&ndash;t6</td><td>48+22+24+34 = 128</td><td class="fx">32.0</td></tr>
+    <tr><td>t4&ndash;t7</td><td>22+24+34+52 = 132</td><td class="fx">33.0</td></tr>
+    <tr><td>t5&ndash;t8</td><td>24+34+52+26 = 136</td><td class="fx">34.0</td></tr>
+    <tr><td>t6&ndash;t9</td><td>34+52+26+28 = 140</td><td class="fx">35.0</td></tr>
+    <tr><td>t7&ndash;t10</td><td>52+26+28+38 = 144</td><td class="fx">36.0</td></tr>
+    <tr><td>t8&ndash;t11</td><td>26+28+38+56 = 148</td><td class="fx">37.0</td></tr>
+    <tr><td>t9&ndash;t12</td><td>28+38+56+30 = 152</td><td class="fx">38.0</td></tr>
+  </table></div>
+
+  <h3>Step 3 &mdash; centre the MA, then take the ratio</h3>
+  <p>Average <strong>two neighbouring</strong> MAs so the trend lines up with a real quarter (CMA). Then <strong>ratio = y &divide; CMA &times; 100</strong>.</p>
+  <div class="ssbox"><table class="ss">
+    <tr><th>t</th><th>Qtr</th><th>y</th><th>CMA = avg of 2 MAs</th><th>Ratio = y/CMA &times;100</th></tr>
+    <tr><td>3</td><td>Q3</td><td class="val">48</td><td>(30.0+31.0)/2 = 30.5</td><td class="fx">157.38</td></tr>
+    <tr><td>4</td><td>Q4</td><td class="val">22</td><td>(31.0+32.0)/2 = 31.5</td><td class="fx">69.84</td></tr>
+    <tr><td>5</td><td>Q1</td><td class="val">24</td><td>(32.0+33.0)/2 = 32.5</td><td class="fx">73.85</td></tr>
+    <tr><td>6</td><td>Q2</td><td class="val">34</td><td>(33.0+34.0)/2 = 33.5</td><td class="fx">101.49</td></tr>
+    <tr><td>7</td><td>Q3</td><td class="val">52</td><td>(34.0+35.0)/2 = 34.5</td><td class="fx">150.72</td></tr>
+    <tr><td>8</td><td>Q4</td><td class="val">26</td><td>(35.0+36.0)/2 = 35.5</td><td class="fx">73.24</td></tr>
+    <tr><td>9</td><td>Q1</td><td class="val">28</td><td>(36.0+37.0)/2 = 36.5</td><td class="fx">76.71</td></tr>
+    <tr><td>10</td><td>Q2</td><td class="val">38</td><td>(37.0+38.0)/2 = 37.5</td><td class="fx">101.33</td></tr>
+  </table></div>
+  <p class="small">The first two and last two quarters have no CMA (not enough neighbours), so they get no ratio.</p>
+
+  <h3>Step 4 &mdash; average the ratios of each quarter</h3>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
+    <tr><td class="rh">ratios</td><td>73.85, 76.71</td><td>101.49, 101.33</td><td>157.38, 150.72</td><td>69.84, 73.24</td><td></td></tr>
+    <tr><td class="rh">average</td><td class="fx">75.28</td><td class="fx">101.41</td><td class="fx">154.05</td><td class="fx">71.54</td><td class="fx">402.28</td></tr>
+  </table></div>
+
+  <h3>Step 5 &mdash; normalise so the indices sum to 400</h3>
+  <div class="formula">Adjustment factor = 400 &divide; 402.28 = 0.99434</div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
+    <tr><td class="rh">avg &times; 0.99434</td><td>74.85</td><td>100.83</td><td>153.18</td><td>71.14</td><td>400.00</td></tr>
+    <tr><td class="rh"><b>Seasonal Index</b></td><td class="fx"><b>74.85</b></td><td class="fx"><b>100.83</b></td><td class="fx"><b>153.18</b></td><td class="fx"><b>71.14</b></td><td class="fx"><b>400</b></td></tr>
+  </table></div>
+  <div class="note"><strong>Reading it:</strong> Q3 runs ~53% <em>above</em> the trend (index 153) and Q4 ~29% <em>below</em> (index 71) &mdash; a strong seasonal pattern. Multiply a trend forecast by <code>index/100</code> to season it.</div>
+  <div class="warn"><strong>Monthly data?</strong> Identical steps with <strong>s = 12</strong>: use a 12-month moving total, a 2&times;12 centred average, average the ratios of all 12 months, then normalise with factor <code>1200 &divide; (sum of the 12 averages)</code> so the indices sum to <strong>1200</strong>.</div>
+`},
+
+{ kind:'note', title:'Excel: Holt-Winters', html:`
+  <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
+  <h2>&#128202; Holt-Winters (additive) in Excel</h2>
+  <p>Three locked parameters &mdash; <kbd>I1 = &alpha;</kbd>, <kbd>I2 = &beta;</kbd>, <kbd>I3 = &gamma;</kbd> &mdash; and a season length <strong>s</strong> (s = 4 quarterly, s = 12 monthly). You keep three columns: Level (C), Trend (D), Season (E).</p>
+  <p class="small">Below: quarterly data, so <strong>s = 4</strong>. Smoothing starts after the first full season (row 6), because the season term needs the value from <strong>4 rows back</strong>.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Level C6</span><code>=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Trend D6</span><code>=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Season E6</span><code>=\$I\$3*(B6-C6)+(1-\$I\$3)*E2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Forecast F7</span><code>=C6+D6+E3</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>Q1</td><td class="val">6</td><td colspan="3" class="fx">initial level / trend / seasonal estimates</td><td></td></tr>
+    <tr><td class="rh">3</td><td>Q2</td><td class="val">8</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">4</td><td>Q3</td><td class="val">3</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">5</td><td>Q4</td><td class="val">1</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">6</td><td>Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6-C6)+(1-\$I\$3)*E2</td><td class="fx">=C5+D5+E2</td></tr>
+    <tr><td class="rh">7</td><td>Q2</td><td class="val">10</td><td class="fx">drag &darr;</td><td class="fx">drag &darr;</td><td class="fx">drag &darr;</td><td class="fx">=C6+D6+E3</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><strong>Initialise</strong> rows 2&ndash;5 (one full season): level &asymp; average of the first season, trend &asymp; average slope, seasonals = value &minus; level.</div></div>
+  <div class="step"><div class="no">2</div><div>From row 6, enter the three formulas above (note <code>E2</code> is the season <strong>4 rows back</strong>), then <strong>select C6:F6 and drag down</strong>.</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Multiplicative</strong> variant: swap <code>&minus;</code> for <code>/</code> and <code>+</code> for <code>*</code> &mdash; e.g. level <code>=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</code>, forecast <code>=(C6+D6)*E3</code>.</div></div>
+  <div class="note">Optimise &alpha;, &beta;, &gamma; together with <strong>Data &rarr; Solver</strong>: minimise the MSE cell by changing <code>I1:I3</code>, each constrained to <code>0 &le; &middot; &le; 1</code>.</div>
+`},
+
+{ kind:'note', title:'R: Setup & Data', html:`
+  <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
+  <h2>&#128200; R setup &amp; preparing the data</h2>
+  <p>The chapter uses the <strong>forecast</strong> / <strong>fpp2</strong> packages. Load the data as a <strong>ts()</strong> object, then split it into an <strong>estimation</strong> and <strong>evaluation</strong> set.</p>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="fn">library</span>(fpp2)
+<span class="fn">library</span>(forecast)
+<span class="fn">library</span>(ggplot2)
+
+<span class="cm"># Read Malaysia CPI and make a yearly time series</span>
+cpi   <span class="kw">&lt;-</span> <span class="fn">read.csv</span>(<span class="st">"data/CPI Malaysia.csv"</span>, check.names = <span class="kw">FALSE</span>)
+cpits <span class="kw">&lt;-</span> <span class="fn">ts</span>(cpi$<span class="st">\`Consumer price index (2010 = 100)\`</span>, start = <span class="nm">1960</span>, frequency = <span class="nm">1</span>)
+
+<span class="cm"># Train / test split</span>
+n       <span class="kw">&lt;-</span> <span class="fn">length</span>(cpits)
+est_part <span class="kw">&lt;-</span> <span class="fn">head</span>(cpits, <span class="nm">50</span>)        <span class="cm"># first 50 obs = estimation</span>
+eva_part <span class="kw">&lt;-</span> <span class="fn">tail</span>(cpits, n - <span class="nm">50</span>)   <span class="cm"># remainder = evaluation</span></pre></div>
+  <div class="note">A monthly series uses <code>frequency = 12</code>; quarterly uses <code>frequency = 4</code>. The frequency is what tells R where the <em>seasons</em> are.</div>
+`},
+
+{ kind:'note', title:'R: SES & Holt', html:`
+  <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
+  <h2>&#128200; SES &amp; Holt&rsquo;s method in R</h2>
+  <h3>Single Exponential Smoothing &mdash; <code>ses()</code></h3>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Fit on the estimation set (R picks the optimal alpha)</span>
+SE_est <span class="kw">&lt;-</span> <span class="fn">ses</span>(est_part)
+<span class="fn">summary</span>(SE_est)
+
+<span class="cm"># Forecast 5 years ahead with a chosen alpha, and plot</span>
+<span class="fn">autoplot</span>(cpits) +
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(<span class="fn">ses</span>(cpits, alpha = <span class="nm">0.999</span>), h = <span class="nm">5</span>),
+            series = <span class="st">"SES Forecast"</span>, PI = <span class="kw">TRUE</span>) +
+  <span class="fn">ylab</span>(<span class="st">"CPI (2010 = 100)"</span>) + <span class="fn">xlab</span>(<span class="st">"Year"</span>)</pre></div>
+  <div class="rout">Smoothing parameters:
+  alpha = 0.9999
+Initial states:  l = 24.13
+sigma:  1.42
+     AIC     AICc      BIC
+  ...      ...      ...</div>
+
+  <h3>Holt&rsquo;s method &mdash; <code>holt()</code></h3>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Two constants: alpha (level) and beta (trend)</span>
+Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part)
+<span class="fn">summary</span>(Holt_est)
+
+<span class="fn">autoplot</span>(cpits) +
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(<span class="fn">holt</span>(cpits, alpha = <span class="nm">0.9922</span>, beta = <span class="nm">0.3708</span>), h = <span class="nm">5</span>),
+            series = <span class="st">"Holt Forecast"</span>, PI = <span class="kw">TRUE</span>) +
+  <span class="fn">labs</span>(title = <span class="st">"Malaysia CPI: Holt's Method"</span>)</pre></div>
+  <div class="note">Leave <code>alpha</code> / <code>beta</code> out and R <strong>optimises them for you</strong> (minimising SSE). Supply them to reproduce a specific textbook result.</div>
+`},
+
+{ kind:'note', title:'R: Holt-Winters & Decomp.', html:`
+  <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
+  <h2>&#128200; Holt-Winters &amp; Decomposition in R</h2>
+  <h3>Holt-Winters &mdash; <code>hw()</code></h3>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Monthly electricity series (frequency = 12 -&gt; seasonal)</span>
+electricts <span class="kw">&lt;-</span> <span class="fn">ts</span>(electric$electric, start = <span class="fn">c</span>(<span class="nm">2015</span>, <span class="nm">1</span>), frequency = <span class="nm">12</span>)
+
+HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seasonal = <span class="st">"additive"</span>,
+             alpha = <span class="nm">0.9522</span>, beta = <span class="nm">0.0002</span>, gamma = <span class="nm">0.0008</span>)
+
+<span class="fn">autoplot</span>(electricts) +
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_fit, h = <span class="nm">12</span>), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
+  <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)</pre></div>
+  <p class="small">Use <code>seasonal = "multiplicative"</code> when the seasonal swings <em>grow</em> with the level of the series.</p>
+
+  <h3>Decomposition forecast &mdash; <code>decompose()</code></h3>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># 1. Split into trend + seasonal + remainder</span>
+decomp_fit <span class="kw">&lt;-</span> <span class="fn">decompose</span>(electricts, type = <span class="st">"multiplicative"</span>)
+
+<span class="cm"># 2. Trend via linear regression on time index</span>
+t_vec   <span class="kw">&lt;-</span> <span class="fn">seq_along</span>(electricts)
+lm_elec <span class="kw">&lt;-</span> <span class="fn">lm</span>(electricts ~ t_vec)
+
+<span class="cm"># 3. Combine future trend with seasonal indices</span>
+t_future  <span class="kw">&lt;-</span> (<span class="fn">length</span>(electricts) + <span class="nm">1</span>):(<span class="fn">length</span>(electricts) + <span class="nm">12</span>)
+T_future  <span class="kw">&lt;-</span> <span class="fn">predict</span>(lm_elec, newdata = <span class="fn">data.frame</span>(t_vec = t_future))
+SI_future <span class="kw">&lt;-</span> <span class="fn">as.numeric</span>(decomp_fit$seasonal[((t_future - <span class="nm">1</span>) %% <span class="nm">12</span>) + <span class="nm">1</span>])
+F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"># multiplicative: trend x seasonal</span></pre></div>
+  <div class="note"><code>autoplot()</code>, <code>autolayer()</code> and <code>forecast()</code> all come from the <strong>forecast</strong> package &mdash; the same trio plots every method above.</div>
+`},
+
+{ kind:'excelquiz', title:'Excel Formula Challenge' },
+
+{ kind:'crossword', title:'Crossword' },
+
+{ kind:'note', title:'Summary', html:`
+  <span class="tag">Wrap up</span>
+  <h2>Chapter Summary</h2>
+  <ul>
+    <li><strong>Univariate models</strong> use only past values — no explanatory variables.</li>
+    <li><strong>Naive</strong> (F<sub>t+m</sub>=y<sub>t</sub>) is the benchmark.</li>
+    <li><strong>Naive with Trend</strong> adjusts for growth; very sensitive to recent changes.</li>
+    <li><strong>Average / Percent Change</strong> average historical movements; short series.</li>
+    <li><strong>SES</strong> — exponentially decreasing weights, one parameter &alpha;, one-step only.</li>
+    <li><strong>DES &amp; Holt's</strong> handle linear trends with multi-step capability.</li>
+    <li><strong>ARRES</strong> adapts &alpha; over time.</li>
+    <li><strong>Holt-Winters</strong> adds seasonal smoothing (&gamma;).</li>
+    <li><strong>Decomposition</strong> extracts trend &amp; seasonal separately, then combines.</li>
+  </ul>
+  <div class="note">You have reached the end &#127881; — revisit the activity pages (orange dots) to check your recall.</div>
+`}
+];
+
+/* ============================================================
+   ACTIVITY DATA
+   ============================================================ */
+const WS_WORDS = ["NAIVE","HOLT","SEASONAL","TREND","ALPHA","DAMPING","ARRES","SES","BENCHMARK","FORECAST"];
+
+const DRAG_SENTENCES = [
+  { text:"Univariate models use only [[one]] variable, formulated from [[past]] values to produce a [[forecast]].",
+    answers:["one","past","forecast"] },
+  { text:"The naive method serves as a [[benchmark]] that other methods should [[outperform]].",
+    answers:["benchmark","outperform"] },
+  { text:"In SES, a larger value of [[alpha]] gives faster [[damping]] of past observations.",
+    answers:["alpha","damping"] },
+  { text:"Holt-Winters is used when a [[seasonal]] component exists, using three smoothing constants.",
+    answers:["seasonal"] }
+];
+// distractors added to the bank
+const DRAG_EXTRA = ["future","moving","beta","trend"];
+
+/* Crossword: simple layout. Grid defined by solution cells. */
+const CW = {
+  cols:12, rows:8,
+  // entries interlock on shared letters: {num, r, c, dir, answer, clue}
+  entries:[
+    {num:1, r:1, c:5, dir:'down',   answer:"TREND",    clue:"Steady upward or downward movement in a series."},
+    {num:2, r:3, c:2, dir:'down',   answer:"NAIVE",    clue:"Simplest forecast; today's value = tomorrow's (benchmark)."},
+    {num:3, r:3, c:7, dir:'across', answer:"ARRES",    clue:"Smoothing whose alpha adapts each period."},
+    {num:3, r:3, c:7, dir:'down',   answer:"ALPHA",    clue:"The single smoothing parameter in SES."},
+    {num:4, r:4, c:0, dir:'across', answer:"SEASONAL", clue:"Component that Holt-Winters is designed to capture."},
+    {num:5, r:4, c:3, dir:'down',   answer:"SES",      clue:"Single exponential smoothing (abbr.)."},
+    {num:6, r:6, c:7, dir:'across', answer:"HOLT",     clue:"Trend method using two constants, level and slope."}
+  ]
+};
+
+/* ---------- Excel formula quiz ---------- */
+const EXQ=[
+  { q:"Cell <b>C3</b> — the Naive forecast for 2019 (equal to the 2018 price in B2).",
+    hint:"Just reference the previous period.", accept:["=B2"] },
+  { q:"Cell <b>C8</b> — the Naive forecast for <b>2024</b> (B7 is the last actual, 2023).",
+    hint:"The last observed value.", accept:["=B7"] },
+  { q:"Cell <b>D3</b> — squared error for 2019 (actual B3, forecast C3).",
+    hint:"(actual − forecast) squared uses the ^ operator.", accept:["=(B3-C3)^2","=(B3-C3)*(B3-C3)"] },
+  { q:"Cell <b>C9</b> — the <b>MSE</b>, the average of squared errors in D3:D7.",
+    hint:"Use the AVERAGE function over a range.", accept:["=AVERAGE(D3:D7)"] },
+  { q:"Cell <b>C3</b> — one step of <b>SES</b> with α locked in E1 (uses B2 and C2).",
+    hint:"Lock E1 with $ signs: $E$1. Form: α·yₜ + (1−α)·Fₜ.",
+    accept:["=$E$1*B2+(1-$E$1)*C2","=$E$1*B2+(1-$E$1)*C2 "] }
+];
+function exqHTML(){
+  const items=EXQ.map((e,i)=>`
+    <div class="exq" data-i="${i}">
+      <div class="q">${i+1}. ${e.q}</div>
+      <input type="text" spellcheck="false" placeholder="type the formula, e.g. =B2 ..." data-i="${i}">
+      <div class="hint">&#128161; ${e.hint}</div>
+    </div>`).join('');
+  return `<span class="tag" style="background:#fdebc9;color:#b06e00">Activity · Type the formula</span>
+  <h2>&#128202; Excel Formula Challenge</h2>
+  ${idBar()}
+  <p class="small">Type the exact Excel formula each cell should contain. Spaces and letter-case don't matter.</p>
+  ${items}
+  <div class="feedback" id="exqfb"></div>
+  <div class="btnrow">
+    <button class="btn" onclick="checkExq()">Check answers</button>
+    <button class="btn ghost" onclick="revealExq()">Show answers</button>
+    <button class="btn" onclick="makePDF('exq')">&#11015; Download PDF</button>
+  </div>`;
+}
+function normF(s){ return (s||'').replace(/\s+/g,'').toUpperCase(); }
+function checkExq(){
+  let ok=0;
+  document.querySelectorAll('.exq input').forEach(inp=>{
+    const i=+inp.dataset.i;
+    const got=normF(inp.value);
+    const good=EXQ[i].accept.some(a=>normF(a)===got);
+    inp.classList.toggle('ok',good);
+    inp.classList.toggle('no',!good);
+    if(good)ok++;
+  });
+  const fb=document.getElementById('exqfb');
+  if(ok===EXQ.length){fb.style.color='#1b9e77';fb.innerHTML='&#127881; All '+EXQ.length+' formulas correct!';}
+  else{fb.style.color='#d73027';fb.textContent=`${ok} / ${EXQ.length} correct — fix the red boxes.`;}
+}
+function revealExq(){
+  document.querySelectorAll('.exq input').forEach(inp=>{
+    const i=+inp.dataset.i; inp.value=EXQ[i].accept[0];
+    inp.classList.add('ok');inp.classList.remove('no');
+  });
+  document.getElementById('exqfb').style.color='#5b6778';
+  document.getElementById('exqfb').textContent='Answers filled in.';
+}
+
+/* ============================================================
+   RENDER PAGES
+   ============================================================ */
+const pagesEl = document.getElementById('pages');
+pages.forEach((p,i)=>{
+  const d=document.createElement('section');
+  d.className='page'; d.dataset.idx=i;
+  if(p.kind==='note'){ d.innerHTML=p.html; }
+  else if(p.kind==='wordsearch'){ d.innerHTML=wsHTML(); }
+  else if(p.kind==='dragwords'){ d.innerHTML=dragHTML(); }
+  else if(p.kind==='crossword'){ d.innerHTML=cwHTML(); }
+  else if(p.kind==='excelquiz'){ d.innerHTML=exqHTML(); }
+  pagesEl.appendChild(d);
+});
+
+/* ---------- Word Search ---------- */
+function wsHTML(){
+  return `<span class="tag" style="background:#fdebc9;color:#b06e00">Activity · Find words</span>
+  <h2>&#128269; Word Search</h2>
+  ${idBar()}
+  <p class="small">Find the <strong>10 method names &amp; key terms</strong>. Click the first letter and drag to the last (any direction). Words can go &rarr; &darr; and diagonally.</p>
+  <div id="wsgrid" class="wsgrid"></div>
+  <div id="wslist" class="wordlist"></div>
+  <div class="feedback" id="wsfb"></div>
+  <div class="btnrow"><button class="btn ghost" onclick="buildWS()">Shuffle / Reset</button>
+    <button class="btn" onclick="makePDF('ws')">&#11015; Download PDF</button></div>`;
+}
+
+/* ---------- Drag words ---------- */
+function dragHTML(){
+  let bank = [];
+  DRAG_SENTENCES.forEach(s=>s.answers.forEach(a=>bank.push(a)));
+  bank = bank.concat(DRAG_EXTRA);
+  bank = shuffle(bank.slice());
+  let sentences = DRAG_SENTENCES.map((s,si)=>{
+    let bi=0;
+    const body = s.text.replace(/\[\[(.*?)\]\]/g,(m,ans)=>{
+      const id=`b_${si}_${bi++}`;
+      return `<span class="blank" data-answer="${ans}" data-id="${id}" ondragover="dOver(event)" ondragleave="dLeave(event)" ondrop="dDrop(event)">____</span>`;
+    });
+    return `<div class="dragsent">${si+1}. ${body}</div>`;
+  }).join('');
+  const chips = bank.map((w,i)=>`<span class="chip" draggable="true" data-word="${w}" id="chip_${i}" ondragstart="dStart(event)">${w}</span>`).join('');
+  return `<span class="tag" style="background:#fdebc9;color:#b06e00">Activity · Drag the words</span>
+  <h2>&#9995; Drag the Words</h2>
+  ${idBar()}
+  <p class="small">Drag each term from the bank into the correct blank. (On touch devices, tap a chip then tap a blank.)</p>
+  <div class="bank" id="bank">${chips}</div>
+  ${sentences}
+  <div class="feedback" id="dragfb"></div>
+  <div class="btnrow">
+    <button class="btn" onclick="checkDrag()">Check answers</button>
+    <button class="btn ghost" onclick="resetDrag()">Reset</button>
+    <button class="btn" onclick="makePDF('drag')">&#11015; Download PDF</button>
+  </div>`;
+}
+
+/* ---------- Crossword ---------- */
+function cwHTML(){
+  // build solution map
+  const sol={}; // key r_c -> {letter, nums:[]}
+  CW.entries.forEach(e=>{
+    for(let k=0;k<e.answer.length;k++){
+      const r=e.dir==='down'?e.r+k:e.r;
+      const c=e.dir==='across'?e.c+k:e.c;
+      const key=r+'_'+c;
+      if(!sol[key]) sol[key]={letter:e.answer[k],num:null};
+      if(k===0) sol[key].num=e.num;
+    }
+  });
+  window.__cwsol=sol;
+  let cells='';
+  for(let r=0;r<CW.rows;r++){
+    for(let c=0;c<CW.cols;c++){
+      const key=r+'_'+c;
+      if(sol[key]){
+        cells+=`<div class="cwcell">${sol[key].num?`<span class="num">${sol[key].num}</span>`:''}<input maxlength="1" data-key="${key}" data-letter="${sol[key].letter}" oninput="this.value=this.value.toUpperCase()"></div>`;
+      } else {
+        cells+=`<div class="cwcell block"></div>`;
+      }
+    }
+  }
+  const across=CW.entries.filter(e=>e.dir==='across').map(e=>`<li><b>${e.num}.</b> ${e.clue}</li>`).join('');
+  const down=CW.entries.filter(e=>e.dir==='down').map(e=>`<li><b>${e.num}.</b> ${e.clue}</li>`).join('');
+  return `<span class="tag" style="background:#fdebc9;color:#b06e00">Activity · Crossword</span>
+  <h2>&#129513; Crossword</h2>
+  ${idBar()}
+  <p class="small">Fill the grid using the clues below.</p>
+  <div class="cw-wrap">
+    <div style="overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch">
+    <div class="cwgrid" style="grid-template-columns:repeat(${CW.cols},32px)">${cells}</div>
+    </div>
+    <div class="clues">
+      <h4>Across</h4><ol style="list-style:none">${across}</ol>
+      <h4>Down</h4><ol style="list-style:none">${down}</ol>
+    </div>
+  </div>
+  <div class="feedback" id="cwfb"></div>
+  <div class="btnrow">
+    <button class="btn" onclick="checkCW()">Check</button>
+    <button class="btn ghost" onclick="revealCW()">Reveal</button>
+    <button class="btn ghost" onclick="clearCW()">Clear</button>
+    <button class="btn" onclick="makePDF('cw')">&#11015; Download PDF</button>
+  </div>`;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+let cur=0;
+const pageEls=[...document.querySelectorAll('.page')];
+const dotsEl=document.getElementById('dots');
+pages.forEach((p,i)=>{
+  const b=document.createElement('button');
+  b.className='dot'+(['wordsearch','dragwords','crossword','excelquiz'].includes(p.kind)?' activity':'');
+  b.title=p.title; b.onclick=()=>go(i);
+  dotsEl.appendChild(b);
+});
+function go(i){
+  cur=Math.max(0,Math.min(pages.length-1,i));
+  pageEls.forEach((el,k)=>el.classList.toggle('active',k===cur));
+  [...dotsEl.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
+  document.getElementById('prev').disabled=cur===0;
+  document.getElementById('next').disabled=cur===pages.length-1;
+  document.getElementById('counter').textContent=`Page ${cur+1} of ${pages.length} — ${pages[cur].title}`;
+  document.getElementById('bar').style.width=((cur)/(pages.length-1)*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(pages[cur].kind==='wordsearch' && !wsBuilt) buildWS();
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT')return;
+  if(e.key==='ArrowRight')go(cur+1);
+  if(e.key==='ArrowLeft')go(cur-1);
+});
+
+/* ============================================================
+   WORD SEARCH LOGIC
+   ============================================================ */
+let wsBuilt=false, wsGrid=[], wsN=12, wsFound=new Set(), wsPlaced=[];
+function buildWS(){
+  wsBuilt=true; wsFound.clear(); wsPlaced=[];
+  const N=wsN;
+  wsGrid=Array.from({length:N},()=>Array(N).fill(''));
+  const dirs=[[0,1],[1,0],[1,1],[1,-1]];
+  const words=[...WS_WORDS].sort((a,b)=>b.length-a.length);
+  words.forEach(w=>{
+    let placed=false;
+    for(let tr=0;tr<400 && !placed;tr++){
+      const d=dirs[Math.floor(Math.random()*dirs.length)];
+      const r=Math.floor(Math.random()*N), c=Math.floor(Math.random()*N);
+      const er=r+d[0]*(w.length-1), ec=c+d[1]*(w.length-1);
+      if(er<0||er>=N||ec<0||ec>=N)continue;
+      let ok=true;
+      for(let k=0;k<w.length;k++){
+        const rr=r+d[0]*k, cc=c+d[1]*k;
+        if(wsGrid[rr][cc]!=='' && wsGrid[rr][cc]!==w[k]){ok=false;break;}
+      }
+      if(!ok)continue;
+      const cells=[];
+      for(let k=0;k<w.length;k++){const rr=r+d[0]*k, cc=c+d[1]*k;wsGrid[rr][cc]=w[k];cells.push(rr+'_'+cc);}
+      wsPlaced.push({word:w,cells:cells.join(',')});
+      placed=true;
+    }
+  });
+  const A='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++)if(wsGrid[r][c]==='')wsGrid[r][c]=A[Math.floor(Math.random()*26)];
+  renderWS();
+}
+function renderWS(){
+  const g=document.getElementById('wsgrid');
+  g.style.gridTemplateColumns=`repeat(${wsN},30px)`;
+  g.innerHTML='';
+  for(let r=0;r<wsN;r++)for(let c=0;c<wsN;c++){
+    const d=document.createElement('div');
+    d.className='wscell'; d.textContent=wsGrid[r][c]; d.dataset.key=r+'_'+c;
+    g.appendChild(d);
+  }
+  const list=document.getElementById('wslist');
+  list.innerHTML=WS_WORDS.map(w=>`<span class="word" data-w="${w}">${w}</span>`).join('');
+  document.getElementById('wsfb').textContent='';
+  attachWS(g);
+}
+function attachWS(g){
+  let sel=[], dragging=false;
+  const key=el=>el&&el.dataset?el.dataset.key:null;
+  function clearSel(){sel.forEach(k=>cellByKey(k).classList.remove('sel'));sel=[];}
+  function cellByKey(k){return g.querySelector(`[data-key="${k}"]`);}
+  function lineKeys(a,b){
+    const [r1,c1]=a.split('_').map(Number),[r2,c2]=b.split('_').map(Number);
+    const dr=Math.sign(r2-r1),dc=Math.sign(c2-c1);
+    const len=Math.max(Math.abs(r2-r1),Math.abs(c2-c1))+1;
+    // valid only straight/diagonal
+    if(!((r1===r2)||(c1===c2)||(Math.abs(r2-r1)===Math.abs(c2-c1))))return null;
+    const ks=[];for(let k=0;k<len;k++)ks.push((r1+dr*k)+'_'+(c1+dc*k));
+    return ks;
+  }
+  let start=null;
+  function begin(k){start=k;dragging=true;clearSel();sel=[k];cellByKey(k).classList.add('sel');}
+  function move(k){if(!dragging||!start)return;const ks=lineKeys(start,k);if(!ks)return;clearSel();sel=ks;sel.forEach(x=>cellByKey(x).classList.add('sel'));}
+  function end(){if(!dragging)return;dragging=false;check();clearSel();start=null;}
+  function check(){
+    const str=sel.map(k=>cellByKey(k).textContent).join('');
+    const rev=str.split('').reverse().join('');
+    for(const p of wsPlaced){
+      if(wsFound.has(p.word))continue;
+      if(str===p.word||rev===p.word){
+        wsFound.add(p.word);
+        p.cells.split(',').forEach(k=>cellByKey(k).classList.add('found'));
+        document.querySelector(`.word[data-w="${p.word}"]`).classList.add('done');
+      }
+    }
+    const fb=document.getElementById('wsfb');
+    if(wsFound.size===WS_WORDS.length){fb.style.color='#1b9e77';fb.textContent='&#127881; All words found!';fb.innerHTML='&#127881; All words found! Great recall.';}
+    else {fb.style.color='#5b6778';fb.textContent=`${wsFound.size} / ${WS_WORDS.length} found`;}
+  }
+  g.addEventListener('mousedown',e=>{const k=key(e.target);if(k){e.preventDefault();begin(k);}});
+  g.addEventListener('mouseover',e=>{const k=key(e.target);if(k)move(k);});
+  document.addEventListener('mouseup',end);
+  // touch
+  g.addEventListener('touchstart',e=>{const t=e.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY);const k=key(el);if(k){e.preventDefault();begin(k);}},{passive:false});
+  g.addEventListener('touchmove',e=>{const t=e.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY);const k=key(el);if(k){e.preventDefault();move(k);}},{passive:false});
+  g.addEventListener('touchend',end);
+}
+
+/* ============================================================
+   DRAG WORDS LOGIC
+   ============================================================ */
+let draggedWord=null, draggedEl=null, tapChip=null;
+function dStart(e){draggedEl=e.target;draggedWord=e.target.dataset.word;e.dataTransfer.setData('text',draggedWord);}
+function dOver(e){e.preventDefault();e.currentTarget.classList.add('over');}
+function dLeave(e){e.currentTarget.classList.remove('over');}
+function dDrop(e){
+  e.preventDefault();
+  const blank=e.currentTarget;blank.classList.remove('over');
+  placeWord(blank, draggedWord, draggedEl);
+}
+function placeWord(blank, word, chipEl){
+  if(!word)return;
+  // if blank already has a chip, free it
+  if(blank.dataset.filled){
+    const prev=document.querySelector(`.chip[data-word="${blank.dataset.filledWord}"][data-home="1"]`);
+  }
+  blank.textContent=word;
+  blank.dataset.filledWord=word;
+  blank.dataset.filled='1';
+  blank.classList.remove('ok','no');
+  if(chipEl) chipEl.classList.add('used');
+  blank.__chip=chipEl;
+}
+// tap-to-place for touch
+document.addEventListener('click',e=>{
+  if(e.target.classList && e.target.classList.contains('chip') && !e.target.classList.contains('used')){
+    document.querySelectorAll('.chip').forEach(c=>c.style.outline='');
+    tapChip=e.target; e.target.style.outline='3px solid #ffd27a';
+  } else if(e.target.classList && e.target.classList.contains('blank') && tapChip){
+    placeWord(e.target, tapChip.dataset.word, tapChip);
+    tapChip.style.outline=''; tapChip=null;
+  }
+});
+function checkDrag(){
+  let correct=0,total=0;
+  document.querySelectorAll('.blank').forEach(b=>{
+    total++;
+    const want=b.dataset.answer, got=b.dataset.filledWord;
+    if(got && got===want){b.classList.add('ok');b.classList.remove('no');correct++;}
+    else {b.classList.add('no');b.classList.remove('ok');}
+  });
+  const fb=document.getElementById('dragfb');
+  if(correct===total){fb.style.color='#1b9e77';fb.innerHTML='&#9989; All correct! Well done.';}
+  else{fb.style.color='#d73027';fb.textContent=`${correct} / ${total} correct — fix the red blanks.`;}
+}
+function resetDrag(){
+  document.querySelectorAll('.blank').forEach(b=>{b.textContent='____';b.dataset.filled='';b.dataset.filledWord='';b.classList.remove('ok','no');});
+  document.querySelectorAll('.chip').forEach(c=>{c.classList.remove('used');c.style.outline='';});
+  document.getElementById('dragfb').textContent='';tapChip=null;
+}
+
+/* ============================================================
+   CROSSWORD LOGIC
+   ============================================================ */
+function checkCW(){
+  let ok=0,total=0,blank=false;
+  document.querySelectorAll('.cwcell input').forEach(inp=>{
+    total++;
+    const want=inp.dataset.letter.toUpperCase();
+    const got=(inp.value||'').toUpperCase();
+    if(!got)blank=true;
+    if(got===want){inp.classList.add('ok');ok++;}else{inp.classList.remove('ok');}
+  });
+  const fb=document.getElementById('cwfb');
+  if(ok===total){fb.style.color='#1b9e77';fb.innerHTML='&#127881; Crossword complete!';}
+  else{fb.style.color='#5b6778';fb.textContent=`${ok} / ${total} letters correct`+(blank?' (some cells empty)':'');}
+}
+function revealCW(){
+  document.querySelectorAll('.cwcell input').forEach(inp=>{inp.value=inp.dataset.letter;inp.classList.add('ok');});
+  document.getElementById('cwfb').style.color='#5b6778';
+  document.getElementById('cwfb').textContent='Answers revealed.';
+}
+function clearCW(){
+  document.querySelectorAll('.cwcell input').forEach(inp=>{inp.value='';inp.classList.remove('ok');});
+  document.getElementById('cwfb').textContent='';
+}
+
+/* ============================================================
+   STUDENT IDENTITY  +  PDF EXPORT
+   ============================================================ */
+const IDENT={name:'',sid:'',group:''};
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function idBar(){
+  return `<div class="idbar">
+    <label>Name<input data-k="name" autocomplete="off"></label>
+    <label>Student ID<input data-k="sid" autocomplete="off"></label>
+    <label>Group<input data-k="group" placeholder="e.g. CDCS2416B" autocomplete="off"></label>
+  </div>`;
+}
+// keep all identity inputs on every page in sync + persist
+document.addEventListener('input',e=>{
+  const k=e.target&&e.target.dataset?e.target.dataset.k:null;
+  if(k && (k==='name'||k==='sid'||k==='group')){
+    IDENT[k]=e.target.value;
+    document.querySelectorAll('[data-k="'+k+'"]').forEach(i=>{if(i!==e.target)i.value=e.target.value;});
+    try{localStorage.setItem('c2ident',JSON.stringify(IDENT));}catch(_){ }
+  }
+});
+function restoreIdent(){
+  try{const s=JSON.parse(localStorage.getItem('c2ident')||'{}');
+    ['name','sid','group'].forEach(k=>{if(s[k]){IDENT[k]=s[k];document.querySelectorAll('[data-k="'+k+'"]').forEach(i=>i.value=s[k]);}});
+  }catch(_){ }
+}
+
+function collectResults(act){
+  if(act==='ws'){
+    const found=[...document.querySelectorAll('#wslist .word.done')].map(w=>w.textContent);
+    return {name:'Word Search', score:`${found.length} / ${WS_WORDS.length} words found`,
+      body:`<ul>${WS_WORDS.map(w=>`<li>${w} &nbsp;${found.includes(w)?'&#10003; found':'&#10007; not found'}</li>`).join('')}</ul>`};
+  }
+  if(act==='drag'){
+    let ok=0,total=0;
+    document.querySelectorAll('.blank').forEach(b=>{total++;if(b.dataset.filledWord && b.dataset.filledWord===b.dataset.answer)ok++;});
+    const rows=[...document.querySelectorAll('.dragsent')].map(s=>`<li>${esc(s.innerText)}</li>`).join('');
+    return {name:'Drag the Words', score:`${ok} / ${total} blanks correct`, body:`<ol>${rows}</ol>`};
+  }
+  if(act==='cw'){
+    let ok=0,total=0;
+    document.querySelectorAll('.cwcell input').forEach(i=>{total++;if((i.value||'').toUpperCase()===i.dataset.letter)ok++;});
+    let grid='<table class="pg">';
+    for(let r=0;r<CW.rows;r++){grid+='<tr>';
+      for(let c=0;c<CW.cols;c++){
+        const inp=document.querySelector(`.cwcell input[data-key="${r}_${c}"]`);
+        grid+= inp ? `<td>${esc((inp.value||'').toUpperCase())}</td>` : `<td class="bk"></td>`;
+      }
+      grid+='</tr>';}
+    grid+='</table>';
+    return {name:'Crossword', score:`${ok} / ${total} letters correct`, body:grid};
+  }
+  if(act==='exq'){
+    let ok=0;const rows=[];
+    document.querySelectorAll('.exq input').forEach(inp=>{
+      const i=+inp.dataset.i, got=inp.value||'';
+      const good=EXQ[i].accept.some(a=>normF(a)===normF(got));
+      if(good)ok++;
+      rows.push(`<li>${i+1}. typed <code>${esc(got)||'(blank)'}</code> &mdash; ${good?'&#10003; correct':'&#10007; answer: <code>'+esc(EXQ[i].accept[0])+'</code>'}</li>`);
+    });
+    return {name:'Excel Formula Challenge', score:`${ok} / ${EXQ.length} correct`, body:`<ol>${rows.join('')}</ol>`};
+  }
+  return {name:'Activity', score:'', body:''};
+}
+function makePDF(act){
+  if(!IDENT.name || !IDENT.sid){
+    const go=confirm("Name and Student ID are empty. Download anyway?");
+    if(!go)return;
+  }
+  const r=collectResults(act);
+  const now=new Date();
+  const pa=document.getElementById('printArea');
+  pa.innerHTML=`
+    <div class="pr-title">STA572 Chapter 2 &mdash; ${r.name}</div>
+    <div class="pr-meta">
+      <div><b>Name:</b> ${esc(IDENT.name)||'__________'}</div>
+      <div><b>Student ID:</b> ${esc(IDENT.sid)||'__________'}</div>
+      <div><b>Group:</b> ${esc(IDENT.group)||'__________'}</div>
+      <div><b>Date:</b> ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+    </div>
+    <div class="pr-score">Score: ${r.score}</div>
+    ${r.body}
+    <div class="pr-note">Generated from the STA572 Chapter 2 interactive notes. Use your browser's &ldquo;Save as PDF&rdquo; in the print dialog.</div>`;
+  window.print();
+}
+window.addEventListener('afterprint',()=>{const pa=document.getElementById('printArea');if(pa)pa.innerHTML='';});
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ---- copy-to-clipboard for R script blocks ---- */
+function decorateRBoxes(){
+  document.querySelectorAll('.rbox').forEach(box=>{
+    const bar=box.querySelector('.rbar');
+    if(!bar || bar.querySelector('.rcopy')) return;
+    const btn=document.createElement('button');
+    btn.type='button'; btn.className='rcopy'; btn.textContent='Copy';
+    btn.onclick=()=>copyCode(box, btn);
+    bar.appendChild(btn);
+  });
+}
+function copyCode(box, btn){
+  const code=box.querySelector('pre').innerText;
+  const done=()=>{btn.textContent='Copied!';btn.classList.add('done');
+                  setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('done');},1500);};
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(code).then(done).catch(()=>fallbackCopy(code,done));
+  } else { fallbackCopy(code,done); }
+}
+function fallbackCopy(text, done){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.top='-9999px'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.focus(); ta.select();
+  try{ document.execCommand('copy'); done(); }catch(_){ }
+  document.body.removeChild(ta);
+}
+
+restoreIdent();
+decorateRBoxes();
+go(0);
+</script>
+</body>
+</html>
