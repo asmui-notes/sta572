@@ -663,7 +663,8 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
 
 { kind:'note', title:'Excel: Holt-Winters', html:`
   <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
-  <h2>&#128202; Holt-Winters (additive) in Excel</h2>
+  <h2>&#128202; Holt-Winters in Excel (additive &amp; multiplicative)</h2>
+  <h3>Additive model</h3>
   <p>Three locked parameters &mdash; <kbd>I1 = &alpha;</kbd>, <kbd>I2 = &beta;</kbd>, <kbd>I3 = &gamma;</kbd> &mdash; and a season length <strong>s</strong> (s = 4 quarterly, s = 12 monthly). You keep three columns: Level (C), Trend (D), Season (E).</p>
   <p class="small">Below: quarterly data, so <strong>s = 4</strong>. Smoothing starts after the first full season (row 6), because the season term needs the value from <strong>4 rows back</strong>.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>Level C6</span><code>=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</code></div>
@@ -681,8 +682,25 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Initialise</strong> rows 2&ndash;5 (one full season): level &asymp; average of the first season, trend &asymp; average slope, seasonals = value &minus; level.</div></div>
   <div class="step"><div class="no">2</div><div>From row 6, enter the three formulas above (note <code>E2</code> is the season <strong>4 rows back</strong>), then <strong>select C6:F6 and drag down</strong>.</div></div>
-  <div class="step"><div class="no">3</div><div><strong>Multiplicative</strong> variant: swap <code>&minus;</code> for <code>/</code> and <code>+</code> for <code>*</code> &mdash; e.g. level <code>=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</code>, forecast <code>=(C6+D6)*E3</code>.</div></div>
-  <div class="note">Optimise &alpha;, &beta;, &gamma; together with <strong>Data &rarr; Solver</strong>: minimise the MSE cell by changing <code>I1:I3</code>, each constrained to <code>0 &le; &middot; &le; 1</code>.</div>
+
+  <h3>Multiplicative model</h3>
+  <p>Use this when the seasonal swings <strong>grow with the level</strong> of the series. The seasonal factor now <strong>multiplies</strong>, so you <em>divide</em> by the season instead of subtracting, and <em>multiply</em> it back in the forecast.</p>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Level C6</span><code>=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Trend D6</span><code>=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Season E6</span><code>=\$I\$3*(B6/C6)+(1-\$I\$3)*E2</code></div>
+  <div class="fbar"><span class="fx-ico">fx</span><span>Forecast F7</span><code>=(C6+D6)*E3</code></div>
+  <div class="ssbox"><table class="ss">
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th></tr>
+    <tr><td class="rh">2</td><td>Q1</td><td class="val">6</td><td colspan="3" class="fx">initial level / trend / seasonal estimates</td><td></td></tr>
+    <tr><td class="rh">3</td><td>Q2</td><td class="val">8</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">4</td><td>Q3</td><td class="val">3</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">5</td><td>Q4</td><td class="val">1</td><td class="fx">init</td><td class="fx">init</td><td class="fx">init</td><td></td></tr>
+    <tr><td class="rh">6</td><td>Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6/C6)+(1-\$I\$3)*E2</td><td class="fx">=(C5+D5)*E2</td></tr>
+    <tr><td class="rh">7</td><td>Q2</td><td class="val">10</td><td class="fx">drag &darr;</td><td class="fx">drag &darr;</td><td class="fx">drag &darr;</td><td class="fx">=(C6+D6)*E3</td></tr>
+  </table></div>
+  <div class="step"><div class="no">1</div><div><strong>Initialise</strong> rows 2&ndash;5 the multiplicative way: level &asymp; season average, trend &asymp; average slope, seasonals = value &divide; level (so they average to 1).</div></div>
+  <div class="step"><div class="no">2</div><div>From row 6, enter the four formulas above (note <code>/</code> and <code>*</code> replace <code>&minus;</code> and <code>+</code>), then <strong>select C6:F6 and drag down</strong>.</div></div>
+  <div class="note"><strong>Additive vs multiplicative:</strong> use additive when seasonal swings stay a constant <em>size</em>; use multiplicative when they stay a constant <em>percentage</em> of the level. Optimise &alpha;, &beta;, &gamma; for either with <strong>Data &rarr; Solver</strong>: minimise the MSE cell by changing <code>I1:I3</code>, each constrained to <code>0 &le; &middot; &le; 1</code>.</div>
 `},
 
 { kind:'note', title:'R: Setup & Data', html:`
