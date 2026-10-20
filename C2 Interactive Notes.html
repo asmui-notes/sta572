@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>C2 Interactive Notes — Univariate Modelling</title>
+<title>C2 Interactive Notes - Univariate Modelling</title>
 <style>
   :root{
     --bg:#f4f6fb; --panel:#ffffff; --ink:#1f2733; --muted:#5b6778;
@@ -176,7 +176,7 @@
 </head>
 <body>
 <header>
-  <h1>STA572 · Chapter 2 — Univariate Modelling Techniques</h1>
+  <h1>STA572 · Chapter 2 - Univariate Modelling Techniques</h1>
   <div class="sub">Interactive study notes · navigate page by page · play the activities</div>
   <div class="progress"><i id="bar"></i></div>
 </header>
@@ -215,10 +215,10 @@ const pages = [
   <h2>&#128229; Blank Practice Workbook</h2>
   <p>Download an Excel workbook pre-loaded with the example data and <strong>blank (yellow) columns</strong> so you can calculate every method <strong>by hand</strong>. Related methods share one sheet:</p>
   <ul>
-    <li><b>Naive &amp; Trend</b> &mdash; Naive and Naive-with-Trend side by side</li>
-    <li><b>Averages</b> &mdash; Average Change and Average % Change together</li>
-    <li><b>SES</b> &middot; <b>DES</b> &middot; <b>Holt</b> &middot; <b>ARRES</b> &mdash; one sheet each</li>
-    <li><b>Holt-Winters</b> &mdash; the quarterly seasonal example</li>
+    <li><b>Naive &amp; Trend</b> - Naive and Naive-with-Trend side by side</li>
+    <li><b>Averages</b> - Average Change and Average % Change together</li>
+    <li><b>SES</b> &middot; <b>DES</b> &middot; <b>Holt</b> &middot; <b>ARRES</b> - one sheet each</li>
+    <li><b>Holt-Winters</b> - the quarterly seasonal example</li>
   </ul>
   <div class="btnrow">
     <button class="btn" onclick="downloadWorkbook()">&#11015; Download practice workbook (.xlsx)</button>
@@ -230,7 +230,7 @@ const pages = [
   <span class="tag">Section 1</span>
   <h2>Introduction to Univariate Models</h2>
   <p><strong>Univariate models</strong> require only <strong>one variable</strong> to be formulated. They use past values of a variable to forecast its future values.</p>
-  <div class="warn"><strong>Disadvantage:</strong> Univariate techniques cannot explain the <em>causes</em> of change — they describe <em>what</em> happened, not <em>why</em>.</div>
+  <div class="warn"><strong>Disadvantage:</strong> Univariate techniques cannot explain the <em>causes</em> of change - they describe <em>what</em> happened, not <em>why</em>.</div>
   <h3>Methods covered in this chapter</h3>
   <table>
     <tr><th>Method</th><th>Best for</th></tr>
@@ -257,7 +257,7 @@ const pages = [
     <li>Best when the series has <strong>no discernible pattern</strong>.</li>
     <li>Performs well with <strong>slow change</strong> in fluctuations.</li>
     <li>Sudden changes severely hurt accuracy.</li>
-    <li>Serves as a <strong>benchmark</strong> — others should beat it.</li>
+    <li>Serves as a <strong>benchmark</strong> - others should beat it.</li>
   </ul>
   <h3>Naive with Trend</h3>
   <p>Modified to account for the <strong>trend component</strong>.</p>
@@ -273,12 +273,12 @@ const pages = [
 { kind:'note', title:'Excel: Naive Methods', html:`
   <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
   <h2>&#128202; Inserting Naive formulas in Excel</h2>
-  <p>Worked example — price (RM) for 2018&ndash;2023. Type the <strong>year</strong> in column A and <strong>price</strong> in column B, then build the forecast in column C.</p>
+  <p>Worked example - price (RM) for 2018&ndash;2023. Type the <strong>year</strong> in column A and <strong>price</strong> in column B, then build the forecast in column C.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>C3</span><code>=B2</code></div>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>A</th><th>B</th><th>C (Naive F<sub>t</sub>)</th><th>D (e&sup2;)</th></tr>
     <tr><td class="rh">1</td><td>Year</td><td>Price</td><td>Forecast</td><td>Sq. Error</td></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>-</td><td>-</td></tr>
     <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=B2</td><td class="fx">=(B3-C3)^2</td></tr>
     <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=B3</td><td class="fx">=(B4-C4)^2</td></tr>
     <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4</td><td class="fx">=(B5-C5)^2</td></tr>
@@ -288,7 +288,7 @@ const pages = [
     <tr><td class="rh">9</td><td colspan="2" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(D3:D7)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div>Click cell <kbd>C3</kbd>, type <code>=B2</code> and press <kbd>Enter</kbd>.</div></div>
-  <div class="step"><div class="no">2</div><div>Select <kbd>C3</kbd>, grab the small square at the cell's bottom-right (the <strong>fill handle</strong>) and <strong>drag down to C7</strong> &mdash; Excel auto-shifts the reference to <code>=B3, =B4, &hellip;</code></div></div>
+  <div class="step"><div class="no">2</div><div>Select <kbd>C3</kbd>, grab the small square at the cell's bottom-right (the <strong>fill handle</strong>) and <strong>drag down to C7</strong> - Excel auto-shifts the reference to <code>=B3, =B4, &hellip;</code></div></div>
   <div class="step"><div class="no">3</div><div>The 2024 forecast is <code>=B7</code> (last actual). MSE cell: <code>=AVERAGE(D3:D7)</code>.</div></div>
 
   <h3>Naive with Trend</h3>
@@ -296,8 +296,8 @@ const pages = [
   <div class="fbar"><span class="fx-ico">fx</span><span>C4</span><code>=B3*(B3/B2)</code></div>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>A</th><th>B</th><th>C (Trend F<sub>t</sub>)</th><th>D (e&sup2;)</th></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td><td>&mdash;</td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>&mdash;</td><td>&mdash;</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>-</td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>-</td><td>-</td></tr>
     <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=B3*(B3/B2)</td><td class="fx">=(B4-C4)^2</td></tr>
     <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4*(B4/B3)</td><td class="fx">=(B5-C5)^2</td></tr>
     <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=B5*(B5/B4)</td><td class="fx">=(B6-C6)^2</td></tr>
@@ -305,10 +305,10 @@ const pages = [
     <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=B7*(B7/B6)</td><td></td></tr>
     <tr><td class="rh">9</td><td colspan="2" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(D4:D7)</td></tr>
   </table></div>
-  <div class="step"><div class="no">1</div><div>Leave <kbd>C2</kbd> and <kbd>C3</kbd> blank &mdash; there is no 2017 value to form the first ratio.</div></div>
+  <div class="step"><div class="no">1</div><div>Leave <kbd>C2</kbd> and <kbd>C3</kbd> blank - there is no 2017 value to form the first ratio.</div></div>
   <div class="step"><div class="no">2</div><div>In <kbd>C4</kbd> type <code>=B3*(B3/B2)</code>, then grab the <strong>fill handle</strong> and <strong>drag down to C7</strong>; the references shift automatically.</div></div>
   <div class="step"><div class="no">3</div><div>Forecast 2024 in <kbd>C8</kbd>: <code>=B7*(B7/B6)</code>. MSE uses the valid rows only: <code>=AVERAGE(D4:D7)</code>.</div></div>
-  <div class="note">Because the ratio multiplies, the forecast climbs when <code>B7 &gt; B6</code> (up-trend) and falls when <code>B7 &lt; B6</code> (down-trend) &mdash; this method reacts <strong>strongly</strong> to the most recent change.</div>
+  <div class="note">Because the ratio multiplies, the forecast climbs when <code>B7 &gt; B6</code> (up-trend) and falls when <code>B7 &lt; B6</code> (down-trend) - this method reacts <strong>strongly</strong> to the most recent change.</div>
 `},
 
 { kind:'wordsearch', title:'Word Search' },
@@ -338,9 +338,9 @@ const pages = [
   <div class="fbar"><span class="fx-ico">fx</span><span>C5</span><code>=B4+((B4-B3)+(B3-B2))/2</code></div>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>A</th><th>B</th><th>C (Avg Change F<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>&mdash;</td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>&mdash;</td></tr>
-    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td>&mdash;</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td>-</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td>-</td></tr>
     <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=B4+((B4-B3)+(B3-B2))/2</td></tr>
     <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=B5+((B5-B4)+(B4-B3))/2</td></tr>
     <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=B6+((B6-B5)+(B5-B4))/2</td></tr>
@@ -350,7 +350,7 @@ const pages = [
   <p>Replace absolute changes with percentage changes:</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>C5</span><code>=B4*(1+(((B4-B3)/B3)+((B3-B2)/B2))/2)</code></div>
   <div class="step"><div class="no">1</div><div>Type the formula in the first usable cell, then <strong>drag the fill handle down</strong> to copy it.</div></div>
-  <div class="warn">Average Percent Change compounds &mdash; avoid forecasting more than <strong>one or two periods</strong> ahead.</div>
+  <div class="warn">Average Percent Change compounds - avoid forecasting more than <strong>one or two periods</strong> ahead.</div>
 `},
 
 { kind:'note', title:'Single Exp. Smoothing', html:`
@@ -376,7 +376,7 @@ const pages = [
 
 { kind:'note', title:'Weighted Average Derivation', html:`
   <span class="tag">Section 4a</span>
-  <h2>&#8721; Weighted Average Interpretation &mdash; Recursive Derivation</h2>
+  <h2>&#8721; Weighted Average Interpretation - Recursive Derivation</h2>
   <p>Start from the one-step-ahead SES forecast:</p>
   <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)F<sub>t</sub> &nbsp;&nbsp;&nbsp;(1)</div>
   <p>The same rule one step earlier gives:</p>
@@ -392,7 +392,7 @@ const pages = [
   <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + &hellip; + &alpha;(1&minus;&alpha;)<sup>t&minus;1</sup>y<sub>1</sub> + (1&minus;&alpha;)<sup>t</sup>F<sub>1</sub></div>
   <p>So F<sub>t+1</sub> is a <strong>weighted average of all past observations</strong> y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;, y<sub>1</sub> with weights:</p>
   <div class="formula">&alpha;, &nbsp; &alpha;(1&minus;&alpha;), &nbsp; &alpha;(1&minus;&alpha;)&sup2;, &nbsp; &hellip;, &nbsp; &alpha;(1&minus;&alpha;)<sup>t&minus;1</sup>, &nbsp; (1&minus;&alpha;)<sup>t</sup></div>
-  <div class="note">These weights add up to 1, and each is <strong>(1&minus;&alpha;)</strong> times the one before it &mdash; which is exactly what produces the <strong>damping effect</strong> on the next page.</div>
+  <div class="note">These weights add up to 1, and each is <strong>(1&minus;&alpha;)</strong> times the one before it - which is exactly what produces the <strong>damping effect</strong> on the next page.</div>
 `},
 
 { kind:'note', title:'Damping & α Effect', html:`
@@ -400,20 +400,20 @@ const pages = [
   <h2>&#128201; The Damping Effect &amp; choosing &alpha;</h2>
   <p>From the derivation on the previous page, <strong>F<sub>t+1</sub> is a weighted average of every past value</strong>, with weights that shrink as you go back in time:</p>
   <div class="formula">F<sub>t+1</sub> = &alpha;y<sub>t</sub> + &alpha;(1&minus;&alpha;)y<sub>t&minus;1</sub> + &alpha;(1&minus;&alpha;)&sup2;y<sub>t&minus;2</sub> + &hellip; + (1&minus;&alpha;)<sup>t</sup>F<sub>1</sub></div>
-  <p>Each step back multiplies the weight by <strong>(1&minus;&alpha;)</strong>, so the weights fall off <strong>exponentially</strong> &mdash; this is the <strong>damping effect</strong>. The most recent value always carries the <strong>largest</strong> weight.</p>
+  <p>Each step back multiplies the weight by <strong>(1&minus;&alpha;)</strong>, so the weights fall off <strong>exponentially</strong> - this is the <strong>damping effect</strong>. The most recent value always carries the <strong>largest</strong> weight.</p>
 
   <div class="note"><strong>Larger &alpha;</strong> &rarr; faster damping &rarr; the past is forgotten quickly (reacts fast). <strong>Smaller &alpha;</strong> &rarr; slower damping &rarr; the past keeps influence longer (smoother).</div>
 
-  <h3>&alpha; = 0.8 &mdash; fast damping</h3>
+  <h3>&alpha; = 0.8 - fast damping</h3>
   <p>Weights: <code>0.8, 0.16, 0.032, 0.0064, 0.00128</code> for y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;</p>
   <div class="wbar"><span class="wlab">y&#8348;</span><i style="width:100%"></i><b>0.800</b></div>
   <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8321;</span><i style="width:20%"></i><b>0.160</b></div>
   <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8322;</span><i style="width:4%"></i><b>0.032</b></div>
   <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8323;</span><i style="width:0.8%"></i><b>0.006</b></div>
   <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8324;</span><i style="width:0.16%"></i><b>0.001</b></div>
-  <p class="small">Past t&minus;3 the weight is almost zero &mdash; only the last few observations matter.</p>
+  <p class="small">Past t&minus;3 the weight is almost zero - only the last few observations matter.</p>
 
-  <h3>&alpha; = 0.2 &mdash; slow damping</h3>
+  <h3>&alpha; = 0.2 - slow damping</h3>
   <p>Weights: <code>0.2, 0.16, 0.128, 0.1024, 0.082</code> for y<sub>t</sub>, y<sub>t&minus;1</sub>, &hellip;</p>
   <div class="wbar"><span class="wlab">y&#8348;</span><i style="width:100%"></i><b>0.200</b></div>
   <div class="wbar"><span class="wlab">y&#8348;&#8331;&#8321;</span><i style="width:80%"></i><b>0.160</b></div>
@@ -430,7 +430,7 @@ const pages = [
 
   <h3>vs a 3-period Moving Average</h3>
   <div class="formula">&#375;<sub>2</sub> = (y<sub>1</sub> + y<sub>2</sub> + y<sub>3</sub>) / 3 = &#8531;y<sub>1</sub> + &#8531;y<sub>2</sub> + &#8531;y<sub>3</sub></div>
-  <p>A moving average uses <strong>equal</strong> weights (&#8531; each) and ignores whether a value is recent or old &mdash; unlike SES, which always favours the most recent observation.</p>
+  <p>A moving average uses <strong>equal</strong> weights (&#8531; each) and ignores whether a value is recent or old - unlike SES, which always favours the most recent observation.</p>
 
   <h3>How to choose &alpha;</h3>
   <table>
@@ -443,7 +443,7 @@ const pages = [
 { kind:'note', title:'Excel: SES', html:`
   <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
   <h2>&#128202; Single Exponential Smoothing in Excel</h2>
-  <p>Put &alpha; in its own cell and lock it with <strong>\$ (absolute reference)</strong> &mdash; press <kbd>F4</kbd> after clicking the cell to add the \$ signs &mdash; so dragging the fill handle never moves it. Here <kbd>E1 = &alpha; = 0.8</kbd>.</p>
+  <p>Put &alpha; in its own cell and lock it with <strong>\$ (absolute reference)</strong> - press <kbd>F4</kbd> after clicking the cell to add the \$ signs - so dragging the fill handle never moves it. Here <kbd>E1 = &alpha; = 0.8</kbd>.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>C3</span><code>=\$E\$1*B2+(1-\$E\$1)*C2</code></div>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>A</th><th>B</th><th>C (SES F<sub>t</sub>)</th><th>D</th><th>E</th></tr>
@@ -457,9 +457,9 @@ const pages = [
     <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=\$E\$1*B7+(1-\$E\$1)*C7</td><td></td><td></td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><kbd>C2</kbd> is the initial value: <code>=B2</code>.</div></div>
-  <div class="step"><div class="no">2</div><div><kbd>C3</kbd>: <code>=\$E\$1*B2+(1-\$E\$1)*C2</code> &mdash; the <code>\$E\$1</code> stays fixed when you <strong>drag down</strong>.</div></div>
+  <div class="step"><div class="no">2</div><div><kbd>C3</kbd>: <code>=\$E\$1*B2+(1-\$E\$1)*C2</code> - the <code>\$E\$1</code> stays fixed when you <strong>drag down</strong>.</div></div>
   <div class="step"><div class="no">3</div><div>Optimise &alpha; with <strong>Data &rarr; Solver</strong>: set the MSE cell to <em>Minimum</em> by changing <code>E1</code>, limits <code>0 &le; E1 &le; 1</code>.</div></div>
-  <div class="note">SES forecasts <strong>one step ahead only</strong> &mdash; the 2024 forecast is just the next <code>C</code> value.</div>
+  <div class="note">SES forecasts <strong>one step ahead only</strong> - the 2024 forecast is just the next <code>C</code> value.</div>
 `},
 
 { kind:'dragwords', title:'Drag the Words' },
@@ -474,14 +474,14 @@ const pages = [
   <p>Linear trend with <strong>two</strong> smoothing constants: level (&alpha;) and slope (&beta;).</p>
   <div class="formula">L<sub>t</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)(L<sub>t&minus;1</sub>+T<sub>t&minus;1</sub>)<br>T<sub>t</sub> = &beta;(L<sub>t</sub>&minus;L<sub>t&minus;1</sub>) + (1&minus;&beta;)T<sub>t&minus;1</sub><br>F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub>&middot;m</div>
   <h3>ARRES</h3>
-  <p><strong>Adaptive Response Rate Exponential Smoothing</strong> — &alpha; <strong>adapts each period</strong> from the ratio of smoothed error to smoothed absolute error.</p>
+  <p><strong>Adaptive Response Rate Exponential Smoothing</strong> - &alpha; <strong>adapts each period</strong> from the ratio of smoothed error to smoothed absolute error.</p>
   <div class="formula">&alpha;<sub>t</sub> = | E<sub>t</sub> / AE<sub>t</sub> |,&nbsp; e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></div>
 `},
 
 { kind:'note', title:'Excel: DES', html:`
   <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
   <h2>&#128202; Double Exponential Smoothing in Excel</h2>
-  <p>Smooth <strong>twice</strong> (S<sub>t</sub> then S'<sub>t</sub>), build the level <strong>a<sub>t</sub></strong> and slope <strong>b<sub>t</sub></strong>, then forecast &mdash; this one <strong>handles a linear trend and multi-step</strong> forecasts. Lock &alpha; in <kbd>I1</kbd> with <strong>\$</strong>.</p>
+  <p>Smooth <strong>twice</strong> (S<sub>t</sub> then S'<sub>t</sub>), build the level <strong>a<sub>t</sub></strong> and slope <strong>b<sub>t</sub></strong>, then forecast - this one <strong>handles a linear trend and multi-step</strong> forecasts. Lock &alpha; in <kbd>I1</kbd> with <strong>\$</strong>.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>S  C3</span><code>=\$I\$1*B3+(1-\$I\$1)*C2</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>S' D3</span><code>=\$I\$1*C3+(1-\$I\$1)*D2</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>a  E3</span><code>=2*C3-D3</code></div>
@@ -539,9 +539,9 @@ const pages = [
     <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=G7*B7+(1-G7)*C7</td><td></td><td></td><td></td><td></td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Row 2 is initialisation:</strong> <code>C2=B2</code>, and <code>D2=E2=F2=0</code>, <code>G2=0.6</code>.</div></div>
-  <div class="step"><div class="no">2</div><div><strong>Forecast</strong> <code>C3 =G2*B2+(1-G2)*C2</code> &mdash; note it uses the <em>previous</em> &alpha; in <code>G2</code>, not a fixed cell.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Forecast</strong> <code>C3 =G2*B2+(1-G2)*C2</code> - note it uses the <em>previous</em> &alpha; in <code>G2</code>, not a fixed cell.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Error</strong> <code>D3 =B3-C3</code>; <strong>smoothed error</strong> <code>E3 =\$I\$1*D3+(1-\$I\$1)*E2</code>; <strong>smoothed abs. error</strong> <code>F3 =\$I\$1*ABS(D3)+(1-\$I\$1)*F2</code>.</div></div>
-  <div class="step"><div class="no">4</div><div><strong>New &alpha;</strong> <code>G3 =IF(F3=0,0,ABS(E3/F3))</code>. Now <strong>select C3:G3 and drag the fill handle down</strong> &mdash; every row updates its own &alpha;.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>New &alpha;</strong> <code>G3 =IF(F3=0,0,ABS(E3/F3))</code>. Now <strong>select C3:G3 and drag the fill handle down</strong> - every row updates its own &alpha;.</div></div>
   <div class="note"><code>ABS(...)</code> gives the absolute value; <code>IF(F3=0,0,...)</code> avoids dividing by zero on the first active row.</div>
 `},
 
@@ -562,7 +562,7 @@ const pages = [
     <tr><td>Multiplicative</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></td></tr>
     <tr><td>Additive</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></td></tr>
   </table>
-  <h3>Decomposition forecasting &mdash; the 3 steps</h3>
+  <h3>Decomposition forecasting - the 3 steps</h3>
   <div class="step"><div class="no">1</div><div><strong>Compute the trend</strong> (T&#770;<sub>t</sub>) by fitting a linear regression on the time index, or by a moving average.</div></div>
   <div class="step"><div class="no">2</div><div><strong>Compute the seasonal indices</strong> (S<sub>t</sub>) using ratio-to-moving-average (see the worked example next).</div></div>
   <div class="step"><div class="no">3</div><div><strong>Combine</strong> trend and seasonal to forecast: <code>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></code> (multiplicative) or <code>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></code> (additive).</div></div>
@@ -583,7 +583,7 @@ const pages = [
   </table>
   <div class="note">An <strong>even</strong> season length (4 or 12) needs a <strong>centered</strong> MA: average two consecutive moving averages so the trend lines up with an actual period.</div>
 
-  <h3>Step 4 — the normalisation (worked)</h3>
+  <h3>Step 4 - the normalisation (worked)</h3>
   <p>Suppose the <strong>unadjusted</strong> quarterly ratio-averages came out as:</p>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
@@ -614,10 +614,10 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
 
 { kind:'note', title:'Worked Seasonal Example', html:`
   <span class="tag">Section 7 · worked example</span>
-  <h2>&#128221; Seasonal Indices &mdash; step by step</h2>
+  <h2>&#128221; Seasonal Indices - step by step</h2>
   <p>Quarterly sales ('000) for 3 years. We will find the four seasonal indices by <strong>ratio-to-moving-average</strong>.</p>
 
-  <h3>Step 1 &mdash; the data</h3>
+  <h3>Step 1 - the data</h3>
   <div class="ssbox"><table class="ss">
     <tr><th>t</th><th>Year</th><th>Qtr</th><th>y</th><th>t</th><th>Year</th><th>Qtr</th><th>y</th></tr>
     <tr><td>1</td><td>2021</td><td>Q1</td><td class="val">20</td><td>7</td><td>2022</td><td>Q3</td><td class="val">52</td></tr>
@@ -628,7 +628,7 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
     <tr><td>6</td><td>2022</td><td>Q2</td><td class="val">34</td><td>12</td><td>2023</td><td>Q4</td><td class="val">30</td></tr>
   </table></div>
 
-  <h3>Step 2 &mdash; 4-quarter moving total &amp; average</h3>
+  <h3>Step 2 - 4-quarter moving total &amp; average</h3>
   <p>Add every <strong>4 consecutive</strong> values; divide by 4. Because 4 is even, each average falls <em>between</em> two quarters.</p>
   <div class="ssbox"><table class="ss">
     <tr><th>Window</th><th>Sum of 4</th><th>&divide; 4 = MA</th></tr>
@@ -643,7 +643,7 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
     <tr><td>t9&ndash;t12</td><td>28+38+56+30 = 152</td><td class="fx">38.0</td></tr>
   </table></div>
 
-  <h3>Step 3 &mdash; centre the MA, then take the ratio</h3>
+  <h3>Step 3 - centre the MA, then take the ratio</h3>
   <p>Average <strong>two neighbouring</strong> MAs so the trend lines up with a real quarter (CMA). Then <strong>ratio = y &divide; CMA &times; 100</strong>.</p>
   <div class="ssbox"><table class="ss">
     <tr><th>t</th><th>Qtr</th><th>y</th><th>CMA = avg of 2 MAs</th><th>Ratio = y/CMA &times;100</th></tr>
@@ -658,24 +658,24 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
   </table></div>
   <p class="small">The first two and last two quarters have no CMA (not enough neighbours), so they get no ratio.</p>
 
-  <h3>Step 4 &mdash; average the ratios of each quarter</h3>
+  <h3>Step 4 - average the ratios of each quarter</h3>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
     <tr><td class="rh">ratios</td><td>73.85, 76.71</td><td>101.49, 101.33</td><td>157.38, 150.72</td><td>69.84, 73.24</td><td></td></tr>
     <tr><td class="rh">average</td><td class="fx">75.28</td><td class="fx">101.41</td><td class="fx">154.05</td><td class="fx">71.54</td><td class="fx">402.28</td></tr>
   </table></div>
 
-  <h3>Step 5 &mdash; normalise so the indices sum to 400</h3>
+  <h3>Step 5 - normalise so the indices sum to 400</h3>
   <div class="formula">Adjustment factor = 400 &divide; 402.28 = 0.99434</div>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Sum</th></tr>
     <tr><td class="rh">avg &times; 0.99434</td><td>74.85</td><td>100.83</td><td>153.18</td><td>71.14</td><td>400.00</td></tr>
     <tr><td class="rh"><b>Seasonal Index</b></td><td class="fx"><b>74.85</b></td><td class="fx"><b>100.83</b></td><td class="fx"><b>153.18</b></td><td class="fx"><b>71.14</b></td><td class="fx"><b>400</b></td></tr>
   </table></div>
-  <div class="note"><strong>Reading it:</strong> Q3 runs ~53% <em>above</em> the trend (index 153) and Q4 ~29% <em>below</em> (index 71) &mdash; a strong seasonal pattern. Multiply a trend forecast by <code>index/100</code> to season it.</div>
+  <div class="note"><strong>Reading it:</strong> Q3 runs ~53% <em>above</em> the trend (index 153) and Q4 ~29% <em>below</em> (index 71) - a strong seasonal pattern. Multiply a trend forecast by <code>index/100</code> to season it.</div>
   <div class="warn"><strong>Monthly data?</strong> Identical steps with <strong>s = 12</strong>: use a 12-month moving total, a 2&times;12 centred average, average the ratios of all 12 months, then normalise with factor <code>1200 &divide; (sum of the 12 averages)</code> so the indices sum to <strong>1200</strong>.</div>
 
-  <h3>Same data &mdash; the <em>additive</em> version</h3>
+  <h3>Same data - the <em>additive</em> version</h3>
   <p>Repeat Steps 1&ndash;3 but <strong>subtract</strong> instead of divide: seasonal effect = <strong>y &minus; CMA</strong>.</p>
   <div class="ssbox"><table class="ss">
     <tr><th>t</th><th>Qtr</th><th>y</th><th>CMA</th><th>y &minus; CMA</th></tr>
@@ -695,9 +695,9 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
     <tr><td class="rh"><b>Seasonal index</b></td><td class="fx"><b>&minus;8.5</b></td><td class="fx"><b>+0.5</b></td><td class="fx"><b>+17.5</b></td><td class="fx"><b>&minus;9.5</b></td><td class="fx"><b>0.0</b></td></tr>
   </table></div>
   <p class="small">Here the averages already sum to <strong>0</strong>, so no shift is needed. If they had summed to, say, <code>+1.2</code>, you would subtract <code>1.2 &divide; 4 = 0.3</code> from each.</p>
-  <div class="note"><strong>Reading it:</strong> Q3 sits <strong>+17.5 units above</strong> the trend and Q4 <strong>9.5 below</strong> &mdash; the same pattern as the multiplicative version, now expressed as <em>amounts</em> rather than <em>percentages</em>. Add <code>index</code> to a trend forecast to season it.</div>
+  <div class="note"><strong>Reading it:</strong> Q3 sits <strong>+17.5 units above</strong> the trend and Q4 <strong>9.5 below</strong> - the same pattern as the multiplicative version, now expressed as <em>amounts</em> rather than <em>percentages</em>. Add <code>index</code> to a trend forecast to season it.</div>
 
-  <h3>Multiplicative vs additive &mdash; summary</h3>
+  <h3>Multiplicative vs additive - summary</h3>
   <div class="ssbox"><table class="ss">
     <tr><th></th><th>Multiplicative</th><th>Additive</th></tr>
     <tr><td class="rh">Seasonal effect</td><td>ratio = y &divide; CMA</td><td>difference = y &minus; CMA</td></tr>
@@ -712,7 +712,7 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
   <span class="tag" style="background:#def0e4;color:#217346">Excel demo</span>
   <h2>&#128202; Holt-Winters in Excel (additive &amp; multiplicative)</h2>
   <h3>Additive model</h3>
-  <p>Three locked parameters &mdash; <kbd>I1 = &alpha;</kbd>, <kbd>I2 = &beta;</kbd>, <kbd>I3 = &gamma;</kbd> &mdash; and a season length <strong>s</strong> (s = 4 quarterly, s = 12 monthly). You keep three columns: Level (C), Trend (D), Season (E).</p>
+  <p>Three locked parameters - <kbd>I1 = &alpha;</kbd>, <kbd>I2 = &beta;</kbd>, <kbd>I3 = &gamma;</kbd> - and a season length <strong>s</strong> (s = 4 quarterly, s = 12 monthly). You keep three columns: Level (C), Trend (D), Season (E).</p>
   <p class="small">Below: quarterly data, so <strong>s = 4</strong>. Smoothing starts after the first full season (row 6), because the season term needs the value from <strong>4 rows back</strong>.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>Level C6</span><code>=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>Trend D6</span><code>=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</code></div>
@@ -786,7 +786,7 @@ eva_part <span class="kw">&lt;-</span> <span class="fn">tail</span>(cpits, n - <
 { kind:'note', title:'R: SES & Holt', html:`
   <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
   <h2>&#128200; SES &amp; Holt&rsquo;s method in R</h2>
-  <h3>Single Exponential Smoothing &mdash; <code>ses()</code></h3>
+  <h3>Single Exponential Smoothing - <code>ses()</code></h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Fit on the estimation set (R picks the optimal alpha)</span>
 SE_est <span class="kw">&lt;-</span> <span class="fn">ses</span>(est_part)
 <span class="fn">summary</span>(SE_est)
@@ -803,7 +803,7 @@ sigma:  1.42
      AIC     AICc      BIC
   ...      ...      ...</div>
 
-  <h3>Holt&rsquo;s method &mdash; <code>holt()</code></h3>
+  <h3>Holt&rsquo;s method - <code>holt()</code></h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Two constants: alpha (level) and beta (trend)</span>
 Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part)
 <span class="fn">summary</span>(Holt_est)
@@ -818,7 +818,7 @@ Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part)
 { kind:'note', title:'R: Holt-Winters & Decomp.', html:`
   <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
   <h2>&#128200; Holt-Winters &amp; Decomposition in R</h2>
-  <h3>Holt-Winters &mdash; <code>hw()</code></h3>
+  <h3>Holt-Winters - <code>hw()</code></h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Monthly electricity series (frequency = 12 -&gt; seasonal)</span>
 electricts <span class="kw">&lt;-</span> <span class="fn">ts</span>(electric$electric, start = <span class="fn">c</span>(<span class="nm">2015</span>, <span class="nm">1</span>), frequency = <span class="nm">12</span>)
 
@@ -830,7 +830,7 @@ HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seas
   <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)</pre></div>
   <p class="small">Use <code>seasonal = "multiplicative"</code> when the seasonal swings <em>grow</em> with the level of the series.</p>
 
-  <h3>Decomposition forecast &mdash; <code>decompose()</code></h3>
+  <h3>Decomposition forecast - <code>decompose()</code></h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># 1. Split into trend + seasonal + remainder</span>
 decomp_fit <span class="kw">&lt;-</span> <span class="fn">decompose</span>(electricts, type = <span class="st">"multiplicative"</span>)
 
@@ -843,7 +843,7 @@ t_future  <span class="kw">&lt;-</span> (<span class="fn">length</span>(electric
 T_future  <span class="kw">&lt;-</span> <span class="fn">predict</span>(lm_elec, newdata = <span class="fn">data.frame</span>(t_vec = t_future))
 SI_future <span class="kw">&lt;-</span> <span class="fn">as.numeric</span>(decomp_fit$seasonal[((t_future - <span class="nm">1</span>) %% <span class="nm">12</span>) + <span class="nm">1</span>])
 F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"># multiplicative: trend x seasonal</span></pre></div>
-  <div class="note"><code>autoplot()</code>, <code>autolayer()</code> and <code>forecast()</code> all come from the <strong>forecast</strong> package &mdash; the same trio plots every method above.</div>
+  <div class="note"><code>autoplot()</code>, <code>autolayer()</code> and <code>forecast()</code> all come from the <strong>forecast</strong> package - the same trio plots every method above.</div>
 `},
 
 { kind:'excelquiz', title:'Excel Formula Challenge' },
@@ -852,18 +852,19 @@ F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"
 
 { kind:'note', title:'Calculating MSE', html:`
   <span class="tag">Section 8</span>
-  <h2>&#128208; Calculating MSE &mdash; how many terms count?</h2>
+  <h2>&#128208; Calculating MSE - how many terms count?</h2>
   <p>The <strong>Mean Squared Error</strong> measures accuracy over the fitted period:</p>
   <div class="formula">MSE = (1/n) &Sigma; (y<sub>t</sub> &minus; F<sub>t</sub>)&sup2; = (1/n) &Sigma; e<sub>t</sub>&sup2;</div>
-  <p>The tricky part is <strong>n</strong> &mdash; how many squared errors you actually have. Not every row produces one.</p>
+  <p>The tricky part is <strong>n</strong> - how many squared errors you actually have. Not every row produces one.</p>
 
-  <h3>The rules</h3>
+  <h3>The rules (calculating by hand)</h3>
   <div class="step"><div class="no">1</div><div>Form the error <code>e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></code> <strong>only on rows that have a forecast</strong>.</div></div>
-  <div class="step"><div class="no">2</div><div><strong>Skip rows with no forecast.</strong> Early periods that lack enough history are blank &mdash; e.g. Average Change needs two past changes, so its first few rows have no F<sub>t</sub>.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Skip rows with no forecast.</strong> Early periods that lack enough history are blank - e.g. Average Change needs two past changes, so its first few rows have no F<sub>t</sub>.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Skip the initialisation seed.</strong> In SES and ARRES the first value <code>F<sub>1</sub> = y<sub>1</sub></code> is a seed, not a real forecast, so its error is not counted.</div></div>
-  <div class="step"><div class="no">4</div><div>Set <strong>n = the number of valid squared errors</strong> and divide by that n &mdash; <em>not</em> by the total sample size.</div></div>
+  <div class="step"><div class="no">4</div><div>Set <strong>n = the number of valid squared errors</strong> and divide by that n - <em>not</em> by the total sample size.</div></div>
+  <div class="note"><strong>In R it's different:</strong> <code>ses()</code>, <code>holt()</code> and <code>hw()</code> <strong>estimate (optimise) the initial values</strong> instead of seeding <code>F&#8321; = y&#8321;</code>, so they produce a residual for <em>every</em> period and average MSE over <strong>all n observations</strong> - a different period from the by-hand count, so R's MSE won't match yours exactly.</div>
 
-  <h3>n for each method &mdash; annual price example (6 observations, 2018&ndash;2023)</h3>
+  <h3>n for each method - annual price example (6 observations, 2018&ndash;2023)</h3>
   <div class="ssbox"><table class="ss">
     <tr><th>Method</th><th>First forecast</th><th>Rows dropped</th><th>n (errors)</th></tr>
     <tr><td>Naive</td><td>2019</td><td>1 (no prior for 2018)</td><td class="fx">5</td></tr>
@@ -874,17 +875,18 @@ F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"
     <tr><td>DES</td><td>2019</td><td>1</td><td class="fx">5</td></tr>
     <tr><td>Holt's</td><td>2019</td><td>1</td><td class="fx">5</td></tr>
     <tr><td>ARRES</td><td>2019</td><td>1 (seed excluded)</td><td class="fx">5</td></tr>
-    <tr><td>Holt-Winters *</td><td>quarterly data</td><td>0</td><td class="fx">8</td></tr>
+    <tr><td>Holt-Winters *</td><td>2023 Q1 (year 2)</td><td>4 (first season initialises)</td><td class="fx">4</td></tr>
   </table></div>
+  <p class="small">* By hand, Holt-Winters uses the whole first season (4 quarters) to initialise and only forecasts from year 2, so <strong>n = 4</strong>. R's <code>hw()</code> reports <strong>n = 8</strong> because it estimates the initial states and scores every quarter (see the note above).</p>
 
-  <div class="warn"><strong>Fair comparison rule:</strong> only compare MSE values computed on the <strong>same series over the same periods</strong>. Holt-Winters (marked *) needs seasonal data, so it runs on a different quarterly set (n = 8) &mdash; its MSE is <strong>not</strong> directly comparable with the annual methods.</div>
+  <div class="warn"><strong>Fair comparison rule:</strong> only compare MSE values computed on the <strong>same series over the same periods</strong>. Holt-Winters (marked *) needs seasonal data, so it runs on a different quarterly set (by hand n = 4) - its MSE is <strong>not</strong> directly comparable with the annual methods.</div>
   <div class="note">In Excel the divisor is handled for you: <code>=AVERAGE(D4:D7)</code> averages only the range you point at, so pick the range that starts at the <strong>first valid error</strong> row. In R, use <code>mean(e2, na.rm = TRUE)</code> to drop the NA rows automatically.</div>
 `},
 
 { kind:'note', title:'Method Comparison', html:`
   <span class="tag">Section 9</span>
   <h2>&#127942; Method Comparison &amp; Picking the Best</h2>
-  <p>All methods below are fitted to the <strong>same series</strong> &mdash; the annual price data (6, 8, 9, 12, 15, 16 for 2018&ndash;2023) &mdash; so their MSE values are directly comparable. Each uses the textbook parameters.</p>
+  <p>All methods below are fitted to the <strong>same series</strong> - the annual price data (6, 8, 9, 12, 15, 16 for 2018&ndash;2023) - so their MSE values are directly comparable. Each uses the textbook parameters.</p>
   <div class="ssbox"><table class="ss">
     <tr><th>Method</th><th>Trend?</th><th>Seasonal?</th><th>Multi-step?</th><th>n</th><th>MSE</th></tr>
     <tr><td>Naive (benchmark)</td><td>No</td><td>No</td><td>No</td><td>5</td><td class="fx">4.800</td></tr>
@@ -895,34 +897,34 @@ F_future  <span class="kw">&lt;-</span> T_future * SI_future    <span class="cm"
     <tr><td>DES (&alpha;=0.8)</td><td>Yes</td><td>No</td><td>Yes</td><td>5</td><td class="fx">2.227</td></tr>
     <tr style="background:#dff3e8"><td><b>Holt's (&alpha;=0.6, &beta;=0.2)</b></td><td><b>Yes</b></td><td>No</td><td><b>Yes</b></td><td><b>5</b></td><td class="fx"><b>0.724 &#10003;</b></td></tr>
     <tr><td>ARRES (&beta;=0.2)</td><td>No</td><td>No</td><td>No</td><td>5</td><td class="fx">4.800</td></tr>
-    <tr><td>Holt-Winters *</td><td>Yes</td><td>Yes</td><td>Yes</td><td>&mdash;</td><td class="fx">different data</td></tr>
+    <tr><td>Holt-Winters *</td><td>Yes</td><td>Yes</td><td>Yes</td><td>-</td><td class="fx">different data</td></tr>
   </table></div>
   <p class="small">* Holt-Winters needs a seasonal series, so it is <strong>not</strong> run on this annual data and its MSE is not comparable here.</p>
 
   <h3>How to select the best method</h3>
   <div class="step"><div class="no">1</div><div><strong>Match the method to the data pattern.</strong> Plot the series first: is there a trend? seasonality? Do you need forecasts more than one step ahead? Rule out methods that cannot capture what you see.</div></div>
-  <div class="step"><div class="no">2</div><div><strong>Fit the candidates and compare an error measure</strong> (MSE, MAPE or MAE) &mdash; ideally on a <strong>hold-out / evaluation set</strong>, not just the fitting period. Lowest error wins.</div></div>
+  <div class="step"><div class="no">2</div><div><strong>Fit the candidates and compare an error measure</strong> (MSE, MAPE or MAE) - ideally on a <strong>hold-out / evaluation set</strong>, not just the fitting period. Lowest error wins.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Beat the benchmark.</strong> Any chosen method should have a lower error than the <strong>Naive</strong> forecast; if it doesn't, keep Naive.</div></div>
   <div class="step"><div class="no">4</div><div><strong>Favour the simpler model</strong> when two methods give similar error (parsimony), and make sure the MSE values were computed on the <strong>same series and periods</strong>.</div></div>
 
-  <div class="note"><strong>Verdict for this example:</strong> the series rises steadily (a clear <em>upward trend</em>, no seasonality), so the trend methods win. <strong>Holt's method</strong> gives the lowest MSE (0.724) &mdash; well below the Naive benchmark (4.800) &mdash; making it the <strong>best choice</strong> here. SES does worst because it has no trend term and lags a rising series.</div>
+  <div class="note"><strong>Verdict for this example:</strong> the series rises steadily (a clear <em>upward trend</em>, no seasonality), so the trend methods win. <strong>Holt's method</strong> gives the lowest MSE (0.724) - well below the Naive benchmark (4.800) - making it the <strong>best choice</strong> here. SES does worst because it has no trend term and lags a rising series.</div>
 `},
 
 { kind:'note', title:'Summary', html:`
   <span class="tag">Wrap up</span>
   <h2>Chapter Summary</h2>
   <ul>
-    <li><strong>Univariate models</strong> use only past values — no explanatory variables.</li>
+    <li><strong>Univariate models</strong> use only past values - no explanatory variables.</li>
     <li><strong>Naive</strong> (F<sub>t+m</sub>=y<sub>t</sub>) is the benchmark.</li>
     <li><strong>Naive with Trend</strong> adjusts for growth; very sensitive to recent changes.</li>
     <li><strong>Average / Percent Change</strong> average historical movements; short series.</li>
-    <li><strong>SES</strong> — exponentially decreasing weights, one parameter &alpha;, one-step only.</li>
+    <li><strong>SES</strong> - exponentially decreasing weights, one parameter &alpha;, one-step only.</li>
     <li><strong>DES &amp; Holt's</strong> handle linear trends with multi-step capability.</li>
     <li><strong>ARRES</strong> adapts &alpha; over time.</li>
     <li><strong>Holt-Winters</strong> adds seasonal smoothing (&gamma;).</li>
     <li><strong>Decomposition</strong> extracts trend &amp; seasonal separately, then combines.</li>
   </ul>
-  <div class="note">You have reached the end &#127881; — revisit the activity pages (orange dots) to check your recall.</div>
+  <div class="note">You have reached the end &#127881; - revisit the activity pages (orange dots) to check your recall.</div>
 `}
 ];
 
@@ -961,15 +963,15 @@ const CW = {
 
 /* ---------- Excel formula quiz ---------- */
 const EXQ=[
-  { q:"Cell <b>C3</b> — the Naive forecast for 2019 (equal to the 2018 price in B2).",
+  { q:"Cell <b>C3</b> - the Naive forecast for 2019 (equal to the 2018 price in B2).",
     hint:"Just reference the previous period.", accept:["=B2"] },
-  { q:"Cell <b>C8</b> — the Naive forecast for <b>2024</b> (B7 is the last actual, 2023).",
+  { q:"Cell <b>C8</b> - the Naive forecast for <b>2024</b> (B7 is the last actual, 2023).",
     hint:"The last observed value.", accept:["=B7"] },
-  { q:"Cell <b>D3</b> — squared error for 2019 (actual B3, forecast C3).",
+  { q:"Cell <b>D3</b> - squared error for 2019 (actual B3, forecast C3).",
     hint:"(actual − forecast) squared uses the ^ operator.", accept:["=(B3-C3)^2","=(B3-C3)*(B3-C3)"] },
-  { q:"Cell <b>C9</b> — the <b>MSE</b>, the average of squared errors in D3:D7.",
+  { q:"Cell <b>C9</b> - the <b>MSE</b>, the average of squared errors in D3:D7.",
     hint:"Use the AVERAGE function over a range.", accept:["=AVERAGE(D3:D7)"] },
-  { q:"Cell <b>C3</b> — one step of <b>SES</b> with α locked in E1 (uses B2 and C2).",
+  { q:"Cell <b>C3</b> - one step of <b>SES</b> with α locked in E1 (uses B2 and C2).",
     hint:"Lock E1 with $ signs: $E$1. Form: α·yₜ + (1−α)·Fₜ.",
     accept:["=$E$1*B2+(1-$E$1)*C2","=$E$1*B2+(1-$E$1)*C2 "] }
 ];
@@ -1004,7 +1006,7 @@ function checkExq(){
   });
   const fb=document.getElementById('exqfb');
   if(ok===EXQ.length){fb.style.color='#1b9e77';fb.innerHTML='&#127881; All '+EXQ.length+' formulas correct!';}
-  else{fb.style.color='#d73027';fb.textContent=`${ok} / ${EXQ.length} correct — fix the red boxes.`;}
+  else{fb.style.color='#d73027';fb.textContent=`${ok} / ${EXQ.length} correct - fix the red boxes.`;}
 }
 function revealExq(){
   document.querySelectorAll('.exq input').forEach(inp=>{
@@ -1138,7 +1140,7 @@ function go(i){
   [...dotsEl.children].forEach((d,k)=>d.classList.toggle('active',k===cur));
   document.getElementById('prev').disabled=cur===0;
   document.getElementById('next').disabled=cur===pages.length-1;
-  document.getElementById('counter').textContent=`Page ${cur+1} of ${pages.length} — ${pages[cur].title}`;
+  document.getElementById('counter').textContent=`Page ${cur+1} of ${pages.length} - ${pages[cur].title}`;
   document.getElementById('bar').style.width=((cur)/(pages.length-1)*100)+'%';
   window.scrollTo({top:0,behavior:'smooth'});
   if(pages[cur].kind==='wordsearch' && !wsBuilt) buildWS();
@@ -1285,7 +1287,7 @@ function checkDrag(){
   });
   const fb=document.getElementById('dragfb');
   if(correct===total){fb.style.color='#1b9e77';fb.innerHTML='&#9989; All correct! Well done.';}
-  else{fb.style.color='#d73027';fb.textContent=`${correct} / ${total} correct — fix the red blanks.`;}
+  else{fb.style.color='#d73027';fb.textContent=`${correct} / ${total} correct - fix the red blanks.`;}
 }
 function resetDrag(){
   document.querySelectorAll('.blank').forEach(b=>{b.textContent='____';b.dataset.filled='';b.dataset.filledWord='';b.classList.remove('ok','no');});
@@ -1378,7 +1380,7 @@ function collectResults(act){
       const i=+inp.dataset.i, got=inp.value||'';
       const good=EXQ[i].accept.some(a=>normF(a)===normF(got));
       if(good)ok++;
-      rows.push(`<li>${i+1}. typed <code>${esc(got)||'(blank)'}</code> &mdash; ${good?'&#10003; correct':'&#10007; answer: <code>'+esc(EXQ[i].accept[0])+'</code>'}</li>`);
+      rows.push(`<li>${i+1}. typed <code>${esc(got)||'(blank)'}</code> - ${good?'&#10003; correct':'&#10007; answer: <code>'+esc(EXQ[i].accept[0])+'</code>'}</li>`);
     });
     return {name:'Excel Formula Challenge', score:`${ok} / ${EXQ.length} correct`, body:`<ol>${rows.join('')}</ol>`};
   }
@@ -1393,7 +1395,7 @@ function makePDF(act){
   const now=new Date();
   const pa=document.getElementById('printArea');
   pa.innerHTML=`
-    <div class="pr-title">STA572 Chapter 2 &mdash; ${r.name}</div>
+    <div class="pr-title">STA572 Chapter 2 - ${r.name}</div>
     <div class="pr-meta">
       <div><b>Name:</b> ${esc(IDENT.name)||'__________'}</div>
       <div><b>Student ID:</b> ${esc(IDENT.sid)||'__________'}</div>
