@@ -446,19 +446,21 @@ const pages = [
   <p>Put &alpha; in its own cell and lock it with <strong>\$ (absolute reference)</strong> - press <kbd>F4</kbd> after clicking the cell to add the \$ signs - so dragging the fill handle never moves it. Here <kbd>E1 = &alpha; = 0.8</kbd>.</p>
   <div class="fbar"><span class="fx-ico">fx</span><span>C3</span><code>=\$E\$1*B2+(1-\$E\$1)*C2</code></div>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B</th><th>C (SES F<sub>t</sub>)</th><th>D</th><th>E</th></tr>
-    <tr><td class="rh">1</td><td>Year</td><td>Price</td><td>Forecast</td><td>&alpha; =</td><td class="val">0.8</td></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td></td><td></td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B2+(1-\$E\$1)*C2</td><td></td><td></td></tr>
-    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*C3</td><td></td><td></td></tr>
-    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*C4</td><td></td><td></td></tr>
-    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$E\$1*B5+(1-\$E\$1)*C5</td><td></td><td></td></tr>
-    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$E\$1*B6+(1-\$E\$1)*C6</td><td></td><td></td></tr>
-    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=\$E\$1*B7+(1-\$E\$1)*C7</td><td></td><td></td></tr>
+    <tr><th></th><th>A</th><th>B</th><th>C (SES F<sub>t</sub>)</th><th>D</th><th>E</th><th>F (e&sup2;)</th></tr>
+    <tr><td class="rh">1</td><td>Year</td><td>Price</td><td>Forecast</td><td>&alpha; =</td><td class="val">0.8</td><td>Sq. Error</td></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td></td><td></td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B2+(1-\$E\$1)*C2</td><td></td><td></td><td class="fx">=(B3-C3)^2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*C3</td><td></td><td></td><td class="fx">=(B4-C4)^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*C4</td><td></td><td></td><td class="fx">=(B5-C5)^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$E\$1*B5+(1-\$E\$1)*C5</td><td></td><td></td><td class="fx">=(B6-C6)^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$E\$1*B6+(1-\$E\$1)*C6</td><td></td><td></td><td class="fx">=(B7-C7)^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=\$E\$1*B7+(1-\$E\$1)*C7</td><td></td><td></td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="4" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(F3:F7)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><kbd>C2</kbd> is the initial value: <code>=B2</code>.</div></div>
   <div class="step"><div class="no">2</div><div><kbd>C3</kbd>: <code>=\$E\$1*B2+(1-\$E\$1)*C2</code> - the <code>\$E\$1</code> stays fixed when you <strong>drag down</strong>.</div></div>
-  <div class="step"><div class="no">3</div><div>Optimise &alpha; with <strong>Data &rarr; Solver</strong>: set the MSE cell to <em>Minimum</em> by changing <code>E1</code>, limits <code>0 &le; E1 &le; 1</code>.</div></div>
+  <div class="step"><div class="no">3</div><div><strong>Squared error</strong> <kbd>F3</kbd>: <code>=(B3-C3)^2</code>, drag down to F7. The <strong>MSE</strong> is <code>F9 =AVERAGE(F3:F7)</code> - the seed row (F2) is left out.</div></div>
+  <div class="step"><div class="no">4</div><div>Optimise &alpha; with <strong>Data &rarr; Solver</strong>: set the <code>F9</code> MSE cell to <em>Minimum</em> by changing <code>E1</code>, limits <code>0 &le; E1 &le; 1</code>.</div></div>
   <div class="note">SES forecasts <strong>one step ahead only</strong> - the 2024 forecast is just the next <code>C</code> value.</div>
 `},
 
@@ -474,8 +476,14 @@ const pages = [
   <p>Linear trend with <strong>two</strong> smoothing constants: level (&alpha;) and slope (&beta;).</p>
   <div class="formula">L<sub>t</sub> = &alpha;y<sub>t</sub> + (1&minus;&alpha;)(L<sub>t&minus;1</sub>+T<sub>t&minus;1</sub>)<br>T<sub>t</sub> = &beta;(L<sub>t</sub>&minus;L<sub>t&minus;1</sub>) + (1&minus;&beta;)T<sub>t&minus;1</sub><br>F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub>&middot;m</div>
   <h3>ARRES</h3>
-  <p><strong>Adaptive Response Rate Exponential Smoothing</strong> - &alpha; <strong>adapts each period</strong> from the ratio of smoothed error to smoothed absolute error.</p>
-  <div class="formula">&alpha;<sub>t</sub> = | E<sub>t</sub> / AE<sub>t</sub> |,&nbsp; e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></div>
+  <p><strong>Adaptive Response Rate Exponential Smoothing</strong> - &alpha; <strong>adapts each period</strong> from the ratio of the smoothed error to the smoothed absolute error.</p>
+  <div class="formula">
+    F<sub>t+1</sub> = &alpha;<sub>t</sub>y<sub>t</sub> + (1&minus;&alpha;<sub>t</sub>)F<sub>t</sub><br>
+    &alpha;<sub>t</sub> = | E<sub>t</sub> / AE<sub>t</sub> |<br>
+    E<sub>t</sub> = &beta;e<sub>t</sub> + (1&minus;&beta;)E<sub>t&minus;1</sub> &nbsp;&nbsp;(smoothed error)<br>
+    AE<sub>t</sub> = &beta;|e<sub>t</sub>| + (1&minus;&beta;)AE<sub>t&minus;1</sub> &nbsp;&nbsp;(smoothed absolute error)
+  </div>
+  <p class="small">where <code>0 &lt; &beta; &lt; 1</code> and <code>e<sub>t</sub> = y<sub>t</sub> &minus; F<sub>t</sub></code>. Because <code>|E<sub>t</sub>| &le; AE<sub>t</sub></code>, the adaptive <code>&alpha;<sub>t</sub></code> stays between 0 and 1: it rises when errors keep the <strong>same sign</strong> (a real shift, react faster) and falls when they alternate (just noise, smooth more).</p>
 `},
 
 { kind:'note', title:'Excel: DES', html:`
@@ -488,18 +496,20 @@ const pages = [
   <div class="fbar"><span class="fx-ico">fx</span><span>b  F3</span><code>=(\$I\$1/(1-\$I\$1))*(C3-D3)</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>F  G4</span><code>=E3+F3*1</code></div>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B (y)</th><th>C (S<sub>t</sub>)</th><th>D (S'<sub>t</sub>)</th><th>E (a<sub>t</sub>)</th><th>F (b<sub>t</sub>)</th><th>G (F<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B2</td><td class="fx">=2*C2-D2</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C2-D2)</td><td></td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$I\$1*B3+(1-\$I\$1)*C2</td><td class="fx">=\$I\$1*C3+(1-\$I\$1)*D2</td><td class="fx">=2*C3-D3</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C3-D3)</td><td class="fx">=E2+F2*1</td></tr>
-    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$I\$1*B4+(1-\$I\$1)*C3</td><td class="fx">=\$I\$1*C4+(1-\$I\$1)*D3</td><td class="fx">=2*C4-D4</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C4-D4)</td><td class="fx">=E3+F3*1</td></tr>
-    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$I\$1*B5+(1-\$I\$1)*C4</td><td class="fx">=\$I\$1*C5+(1-\$I\$1)*D4</td><td class="fx">=2*C5-D5</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C5-D5)</td><td class="fx">=E4+F4*1</td></tr>
-    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$I\$1*B6+(1-\$I\$1)*C5</td><td class="fx">=\$I\$1*C6+(1-\$I\$1)*D5</td><td class="fx">=2*C6-D6</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C6-D6)</td><td class="fx">=E5+F5*1</td></tr>
-    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$I\$1*B7+(1-\$I\$1)*C6</td><td class="fx">=\$I\$1*C7+(1-\$I\$1)*D6</td><td class="fx">=2*C7-D7</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C7-D7)</td><td class="fx">=E6+F6*1</td></tr>
-    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td></td><td></td><td></td><td></td><td class="fx">=E7+F7*1</td></tr>
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (S<sub>t</sub>)</th><th>D (S'<sub>t</sub>)</th><th>E (a<sub>t</sub>)</th><th>F (b<sub>t</sub>)</th><th>G (F<sub>t</sub>)</th><th>H (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B2</td><td class="fx">=2*C2-D2</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C2-D2)</td><td></td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$I\$1*B3+(1-\$I\$1)*C2</td><td class="fx">=\$I\$1*C3+(1-\$I\$1)*D2</td><td class="fx">=2*C3-D3</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C3-D3)</td><td class="fx">=E2+F2*1</td><td class="fx">=(B3-G3)^2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$I\$1*B4+(1-\$I\$1)*C3</td><td class="fx">=\$I\$1*C4+(1-\$I\$1)*D3</td><td class="fx">=2*C4-D4</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C4-D4)</td><td class="fx">=E3+F3*1</td><td class="fx">=(B4-G4)^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$I\$1*B5+(1-\$I\$1)*C4</td><td class="fx">=\$I\$1*C5+(1-\$I\$1)*D4</td><td class="fx">=2*C5-D5</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C5-D5)</td><td class="fx">=E4+F4*1</td><td class="fx">=(B5-G5)^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$I\$1*B6+(1-\$I\$1)*C5</td><td class="fx">=\$I\$1*C6+(1-\$I\$1)*D5</td><td class="fx">=2*C6-D6</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C6-D6)</td><td class="fx">=E5+F5*1</td><td class="fx">=(B6-G6)^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$I\$1*B7+(1-\$I\$1)*C6</td><td class="fx">=\$I\$1*C7+(1-\$I\$1)*D6</td><td class="fx">=2*C7-D7</td><td class="fx">=(\$I\$1/(1-\$I\$1))*(C7-D7)</td><td class="fx">=E6+F6*1</td><td class="fx">=(B7-G7)^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td></td><td></td><td></td><td></td><td class="fx">=E7+F7*1</td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="6" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(H3:H7)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Initialise row 2:</strong> <code>C2=B2</code> and <code>D2=B2</code>.</div></div>
   <div class="step"><div class="no">2</div><div>Enter the five formulas in row 3, then <strong>select C3:G3 and drag the fill handle down</strong>.</div></div>
   <div class="step"><div class="no">3</div><div>The forecast sits <strong>one row down</strong> (uses last period's a and b): <code>G4 =E3+F3*1</code>. For <strong>m steps ahead</strong> change <code>*1</code> to <code>*m</code>.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>Squared error</strong> <kbd>H3</kbd>: <code>=(B3-G3)^2</code>, drag down to H7. The <strong>MSE</strong> is <code>H9 =AVERAGE(H3:H7)</code>.</div></div>
 `},
 
 { kind:'note', title:'Excel: Holt', html:`
@@ -510,18 +520,20 @@ const pages = [
   <div class="fbar"><span class="fx-ico">fx</span><span>Trend D3</span><code>=\$E\$2*(C3-C2)+(1-\$E\$2)*D2</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>Forecast E3</span><code>=C2+D2</code></div>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (F<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B3-B2</td><td></td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*(C2+D2)</td><td class="fx">=\$E\$2*(C3-C2)+(1-\$E\$2)*D2</td><td class="fx">=C2+D2</td></tr>
-    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*(C3+D3)</td><td class="fx">=\$E\$2*(C4-C3)+(1-\$E\$2)*D3</td><td class="fx">=C3+D3</td></tr>
-    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$E\$1*B5+(1-\$E\$1)*(C4+D4)</td><td class="fx">=\$E\$2*(C5-C4)+(1-\$E\$2)*D4</td><td class="fx">=C4+D4</td></tr>
-    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$E\$1*B6+(1-\$E\$1)*(C5+D5)</td><td class="fx">=\$E\$2*(C6-C5)+(1-\$E\$2)*D5</td><td class="fx">=C5+D5</td></tr>
-    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$E\$1*B7+(1-\$E\$1)*(C6+D6)</td><td class="fx">=\$E\$2*(C7-C6)+(1-\$E\$2)*D6</td><td class="fx">=C6+D6</td></tr>
-    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td></td><td></td><td class="fx">=C7+D7</td></tr>
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (F<sub>t</sub>)</th><th>F (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">=B2</td><td></td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=\$E\$1*B3+(1-\$E\$1)*(C2+D2)</td><td class="fx">=\$E\$2*(C3-C2)+(1-\$E\$2)*D2</td><td class="fx">=C2+D2</td><td class="fx">=(B3-E3)^2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=\$E\$1*B4+(1-\$E\$1)*(C3+D3)</td><td class="fx">=\$E\$2*(C4-C3)+(1-\$E\$2)*D3</td><td class="fx">=C3+D3</td><td class="fx">=(B4-E4)^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=\$E\$1*B5+(1-\$E\$1)*(C4+D4)</td><td class="fx">=\$E\$2*(C5-C4)+(1-\$E\$2)*D4</td><td class="fx">=C4+D4</td><td class="fx">=(B5-E5)^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=\$E\$1*B6+(1-\$E\$1)*(C5+D5)</td><td class="fx">=\$E\$2*(C6-C5)+(1-\$E\$2)*D5</td><td class="fx">=C5+D5</td><td class="fx">=(B6-E6)^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=\$E\$1*B7+(1-\$E\$1)*(C6+D6)</td><td class="fx">=\$E\$2*(C7-C6)+(1-\$E\$2)*D6</td><td class="fx">=C6+D6</td><td class="fx">=(B7-E7)^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td></td><td></td><td class="fx">=C7+D7</td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="4" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(F3:F7)</td></tr>
   </table></div>
-  <div class="step"><div class="no">1</div><div><strong>Initialise row 2:</strong> level <code>C2=B2</code>, trend <code>D2=B3-B2</code> (first slope).</div></div>
+  <div class="step"><div class="no">1</div><div><strong>Initialise row 2:</strong> level <code>C2=B2</code>, trend <code>D2=B2</code> (seed per your reference).</div></div>
   <div class="step"><div class="no">2</div><div>Enter the Level and Trend formulas in row 3, then <strong>select C3:D3 and drag down</strong>.</div></div>
   <div class="step"><div class="no">3</div><div>Forecast is <code>=C+D</code> one step, or <code>=C3+D3*m</code> for <strong>m steps ahead</strong>.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>Squared error</strong> <kbd>F3</kbd>: <code>=(B3-E3)^2</code>, drag down to F7. The <strong>MSE</strong> is <code>F9 =AVERAGE(F3:F7)</code>.</div></div>
 `},
 
 { kind:'note', title:'Excel: ARRES', html:`
@@ -529,19 +541,21 @@ const pages = [
   <h2>&#128202; ARRES in Excel</h2>
   <p>ARRES lets &alpha; <strong>change every period</strong>. You track five helper columns. Put &beta; in its own locked cell (here <kbd>I1 = 0.2</kbd>); the starting &alpha; goes in <kbd>G2 = 0.6</kbd>.</p>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B</th><th>C (F<sub>t</sub>)</th><th>D (e<sub>t</sub>)</th><th>E (E<sub>t</sub>)</th><th>F (AE<sub>t</sub>)</th><th>G (&alpha;<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0.6</td></tr>
-    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=G2*B2+(1-G2)*C2</td><td class="fx">=B3-C3</td><td class="fx">=\$I\$1*D3+(1-\$I\$1)*E2</td><td class="fx">=\$I\$1*ABS(D3)+(1-\$I\$1)*F2</td><td class="fx">=IF(F3=0,0,ABS(E3/F3))</td></tr>
-    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=G3*B3+(1-G3)*C3</td><td class="fx">=B4-C4</td><td class="fx">=\$I\$1*D4+(1-\$I\$1)*E3</td><td class="fx">=\$I\$1*ABS(D4)+(1-\$I\$1)*F3</td><td class="fx">=IF(F4=0,0,ABS(E4/F4))</td></tr>
-    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=G4*B4+(1-G4)*C4</td><td class="fx">=B5-C5</td><td class="fx">=\$I\$1*D5+(1-\$I\$1)*E4</td><td class="fx">=\$I\$1*ABS(D5)+(1-\$I\$1)*F4</td><td class="fx">=IF(F5=0,0,ABS(E5/F5))</td></tr>
-    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=G5*B5+(1-G5)*C5</td><td class="fx">=B6-C6</td><td class="fx">=\$I\$1*D6+(1-\$I\$1)*E5</td><td class="fx">=\$I\$1*ABS(D6)+(1-\$I\$1)*F5</td><td class="fx">=IF(F6=0,0,ABS(E6/F6))</td></tr>
-    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=G6*B6+(1-G6)*C6</td><td class="fx">=B7-C7</td><td class="fx">=\$I\$1*D7+(1-\$I\$1)*E6</td><td class="fx">=\$I\$1*ABS(D7)+(1-\$I\$1)*F6</td><td class="fx">=IF(F7=0,0,ABS(E7/F7))</td></tr>
-    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=G7*B7+(1-G7)*C7</td><td></td><td></td><td></td><td></td></tr>
+    <tr><th></th><th>A</th><th>B</th><th>C (F<sub>t</sub>)</th><th>D (e<sub>t</sub>)</th><th>E (E<sub>t</sub>)</th><th>F (AE<sub>t</sub>)</th><th>G (&alpha;<sub>t</sub>)</th><th>H (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>2018</td><td class="val">6</td><td class="fx">=B2</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0</td><td class="fx">0.6</td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>2019</td><td class="val">8</td><td class="fx">=G2*B2+(1-G2)*C2</td><td class="fx">=B3-C3</td><td class="fx">=\$I\$1*D3+(1-\$I\$1)*E2</td><td class="fx">=\$I\$1*ABS(D3)+(1-\$I\$1)*F2</td><td class="fx">=IF(F3=0,0,ABS(E3/F3))</td><td class="fx">=D3^2</td></tr>
+    <tr><td class="rh">4</td><td>2020</td><td class="val">9</td><td class="fx">=G3*B3+(1-G3)*C3</td><td class="fx">=B4-C4</td><td class="fx">=\$I\$1*D4+(1-\$I\$1)*E3</td><td class="fx">=\$I\$1*ABS(D4)+(1-\$I\$1)*F3</td><td class="fx">=IF(F4=0,0,ABS(E4/F4))</td><td class="fx">=D4^2</td></tr>
+    <tr><td class="rh">5</td><td>2021</td><td class="val">12</td><td class="fx">=G4*B4+(1-G4)*C4</td><td class="fx">=B5-C5</td><td class="fx">=\$I\$1*D5+(1-\$I\$1)*E4</td><td class="fx">=\$I\$1*ABS(D5)+(1-\$I\$1)*F4</td><td class="fx">=IF(F5=0,0,ABS(E5/F5))</td><td class="fx">=D5^2</td></tr>
+    <tr><td class="rh">6</td><td>2022</td><td class="val">15</td><td class="fx">=G5*B5+(1-G5)*C5</td><td class="fx">=B6-C6</td><td class="fx">=\$I\$1*D6+(1-\$I\$1)*E5</td><td class="fx">=\$I\$1*ABS(D6)+(1-\$I\$1)*F5</td><td class="fx">=IF(F6=0,0,ABS(E6/F6))</td><td class="fx">=D6^2</td></tr>
+    <tr><td class="rh">7</td><td>2023</td><td class="val">16</td><td class="fx">=G6*B6+(1-G6)*C6</td><td class="fx">=B7-C7</td><td class="fx">=\$I\$1*D7+(1-\$I\$1)*E6</td><td class="fx">=\$I\$1*ABS(D7)+(1-\$I\$1)*F6</td><td class="fx">=IF(F7=0,0,ABS(E7/F7))</td><td class="fx">=D7^2</td></tr>
+    <tr><td class="rh">8</td><td><b>2024</b></td><td></td><td class="fx">=G7*B7+(1-G7)*C7</td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="rh">9</td><td colspan="6" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(H3:H7)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Row 2 is initialisation:</strong> <code>C2=B2</code>, and <code>D2=E2=F2=0</code>, <code>G2=0.6</code>.</div></div>
   <div class="step"><div class="no">2</div><div><strong>Forecast</strong> <code>C3 =G2*B2+(1-G2)*C2</code> - note it uses the <em>previous</em> &alpha; in <code>G2</code>, not a fixed cell.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Error</strong> <code>D3 =B3-C3</code>; <strong>smoothed error</strong> <code>E3 =\$I\$1*D3+(1-\$I\$1)*E2</code>; <strong>smoothed abs. error</strong> <code>F3 =\$I\$1*ABS(D3)+(1-\$I\$1)*F2</code>.</div></div>
   <div class="step"><div class="no">4</div><div><strong>New &alpha;</strong> <code>G3 =IF(F3=0,0,ABS(E3/F3))</code>. Now <strong>select C3:G3 and drag the fill handle down</strong> - every row updates its own &alpha;.</div></div>
+  <div class="step"><div class="no">5</div><div><strong>Squared error</strong> <kbd>H3</kbd>: <code>=D3^2</code> (D already holds <code>e<sub>t</sub></code>), drag down to H7. The <strong>MSE</strong> is <code>H9 =AVERAGE(H3:H7)</code>.</div></div>
   <div class="note"><code>ABS(...)</code> gives the absolute value; <code>IF(F3=0,0,...)</code> avoids dividing by zero on the first active row.</div>
 `},
 
@@ -719,23 +733,25 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
   <div class="fbar"><span class="fx-ico">fx</span><span>Season E6</span><code>=\$I\$3*(B6-C6)+(1-\$I\$3)*E2</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>Forecast F7</span><code>=C6+D6+E3</code></div>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>22 Q1</td><td class="val">6</td><td></td><td></td><td class="fx">=B2-\$C\$5</td><td></td></tr>
-    <tr><td class="rh">3</td><td>22 Q2</td><td class="val">8</td><td></td><td></td><td class="fx">=B3-\$C\$5</td><td></td></tr>
-    <tr><td class="rh">4</td><td>22 Q3</td><td class="val">3</td><td></td><td></td><td class="fx">=B4-\$C\$5</td><td></td></tr>
-    <tr><td class="rh">5</td><td>22 Q4</td><td class="val">1</td><td class="fx">=AVERAGE(B2:B5)</td><td class="fx">=(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</td><td class="fx">=B5-\$C\$5</td><td></td></tr>
-    <tr><td class="rh">6</td><td>23 Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6-C6)+(1-\$I\$3)*E2</td><td class="fx">=C5+D5+E2</td></tr>
-    <tr><td class="rh">7</td><td>23 Q2</td><td class="val">10</td><td class="fx">=\$I\$1*(B7-E3)+(1-\$I\$1)*(C6+D6)</td><td class="fx">=\$I\$2*(C7-C6)+(1-\$I\$2)*D6</td><td class="fx">=\$I\$3*(B7-C7)+(1-\$I\$3)*E3</td><td class="fx">=C6+D6+E3</td></tr>
-    <tr><td class="rh">8</td><td>23 Q3</td><td class="val">5</td><td class="fx">=\$I\$1*(B8-E4)+(1-\$I\$1)*(C7+D7)</td><td class="fx">=\$I\$2*(C8-C7)+(1-\$I\$2)*D7</td><td class="fx">=\$I\$3*(B8-C8)+(1-\$I\$3)*E4</td><td class="fx">=C7+D7+E4</td></tr>
-    <tr><td class="rh">9</td><td>23 Q4</td><td class="val">3</td><td class="fx">=\$I\$1*(B9-E5)+(1-\$I\$1)*(C8+D8)</td><td class="fx">=\$I\$2*(C9-C8)+(1-\$I\$2)*D8</td><td class="fx">=\$I\$3*(B9-C9)+(1-\$I\$3)*E5</td><td class="fx">=C8+D8+E5</td></tr>
-    <tr><td class="rh">10</td><td><b>24 Q1</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*1+E6</td></tr>
-    <tr><td class="rh">11</td><td><b>24 Q2</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*2+E7</td></tr>
-    <tr><td class="rh">12</td><td><b>24 Q3</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*3+E8</td></tr>
-    <tr><td class="rh">13</td><td><b>24 Q4</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*4+E9</td></tr>
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th><th>G (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>22 Q1</td><td class="val">6</td><td></td><td></td><td class="fx">=B2-\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>22 Q2</td><td class="val">8</td><td></td><td></td><td class="fx">=B3-\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">4</td><td>22 Q3</td><td class="val">3</td><td></td><td></td><td class="fx">=B4-\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">5</td><td>22 Q4</td><td class="val">1</td><td class="fx">=AVERAGE(B2:B5)</td><td class="fx">=(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</td><td class="fx">=B5-\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">6</td><td>23 Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6-E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6-C6)+(1-\$I\$3)*E2</td><td class="fx">=C5+D5+E2</td><td class="fx">=(B6-F6)^2</td></tr>
+    <tr><td class="rh">7</td><td>23 Q2</td><td class="val">10</td><td class="fx">=\$I\$1*(B7-E3)+(1-\$I\$1)*(C6+D6)</td><td class="fx">=\$I\$2*(C7-C6)+(1-\$I\$2)*D6</td><td class="fx">=\$I\$3*(B7-C7)+(1-\$I\$3)*E3</td><td class="fx">=C6+D6+E3</td><td class="fx">=(B7-F7)^2</td></tr>
+    <tr><td class="rh">8</td><td>23 Q3</td><td class="val">5</td><td class="fx">=\$I\$1*(B8-E4)+(1-\$I\$1)*(C7+D7)</td><td class="fx">=\$I\$2*(C8-C7)+(1-\$I\$2)*D7</td><td class="fx">=\$I\$3*(B8-C8)+(1-\$I\$3)*E4</td><td class="fx">=C7+D7+E4</td><td class="fx">=(B8-F8)^2</td></tr>
+    <tr><td class="rh">9</td><td>23 Q4</td><td class="val">3</td><td class="fx">=\$I\$1*(B9-E5)+(1-\$I\$1)*(C8+D8)</td><td class="fx">=\$I\$2*(C9-C8)+(1-\$I\$2)*D8</td><td class="fx">=\$I\$3*(B9-C9)+(1-\$I\$3)*E5</td><td class="fx">=C8+D8+E5</td><td class="fx">=(B9-F9)^2</td></tr>
+    <tr><td class="rh">10</td><td><b>24 Q1</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*1+E6</td><td></td></tr>
+    <tr><td class="rh">11</td><td><b>24 Q2</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*2+E7</td><td></td></tr>
+    <tr><td class="rh">12</td><td><b>24 Q3</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*3+E8</td><td></td></tr>
+    <tr><td class="rh">13</td><td><b>24 Q4</b></td><td></td><td></td><td></td><td></td><td class="fx">=C9+D9*4+E9</td><td></td></tr>
+    <tr><td class="rh">14</td><td colspan="5" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(G6:G9)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Initialise on the last quarter of year 1 (row 5):</strong> level <code>C5 =AVERAGE(B2:B5)</code> (mean of the first season); trend <code>D5 =(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</code> (average year-2&minus;year-1 change over s&sup2;, needs two years). Seasonals for each first-season quarter: <code>Sₜ = yₜ &minus; \$C\$5</code> (additive deviations, sum &asymp; 0).</div></div>
   <div class="step"><div class="no">2</div><div>From row 6 (period s+1), enter the four formulas (note <code>E2</code> is the season <strong>4 rows back</strong>), then <strong>select C6:F6 and drag down to row 9</strong>.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Forecast all of 2024</strong> from the last level <code>C9</code> and trend <code>D9</code>: <code>F<sub>t+m</sub> = C9 + D9&times;m + S</code>, with <code>m = 1,2,3,4</code> and the season index from a year earlier (<code>E6, E7, E8, E9</code>).</div></div>
+  <div class="step"><div class="no">4</div><div><strong>Squared error</strong> <kbd>G6</kbd>: <code>=(B6-F6)^2</code>, drag down to G9 (only the fitted quarters). The <strong>MSE</strong> is <code>G14 =AVERAGE(G6:G9)</code>.</div></div>
 
   <h3>Multiplicative model</h3>
   <p>Use this when the seasonal swings <strong>grow with the level</strong> of the series. The seasonal factor now <strong>multiplies</strong>, so you <em>divide</em> by the season instead of subtracting, and <em>multiply</em> it back in the forecast.</p>
@@ -744,23 +760,25 @@ d$figure            <span class="cm"># the s unique seasonal indices (length 4 o
   <div class="fbar"><span class="fx-ico">fx</span><span>Season E6</span><code>=\$I\$3*(B6/C6)+(1-\$I\$3)*E2</code></div>
   <div class="fbar"><span class="fx-ico">fx</span><span>Forecast F7</span><code>=(C6+D6)*E3</code></div>
   <div class="ssbox"><table class="ss">
-    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th></tr>
-    <tr><td class="rh">2</td><td>22 Q1</td><td class="val">6</td><td></td><td></td><td class="fx">=B2/\$C\$5</td><td></td></tr>
-    <tr><td class="rh">3</td><td>22 Q2</td><td class="val">8</td><td></td><td></td><td class="fx">=B3/\$C\$5</td><td></td></tr>
-    <tr><td class="rh">4</td><td>22 Q3</td><td class="val">3</td><td></td><td></td><td class="fx">=B4/\$C\$5</td><td></td></tr>
-    <tr><td class="rh">5</td><td>22 Q4</td><td class="val">1</td><td class="fx">=AVERAGE(B2:B5)</td><td class="fx">=(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</td><td class="fx">=B5/\$C\$5</td><td></td></tr>
-    <tr><td class="rh">6</td><td>23 Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6/C6)+(1-\$I\$3)*E2</td><td class="fx">=(C5+D5)*E2</td></tr>
-    <tr><td class="rh">7</td><td>23 Q2</td><td class="val">10</td><td class="fx">=\$I\$1*(B7/E3)+(1-\$I\$1)*(C6+D6)</td><td class="fx">=\$I\$2*(C7-C6)+(1-\$I\$2)*D6</td><td class="fx">=\$I\$3*(B7/C7)+(1-\$I\$3)*E3</td><td class="fx">=(C6+D6)*E3</td></tr>
-    <tr><td class="rh">8</td><td>23 Q3</td><td class="val">5</td><td class="fx">=\$I\$1*(B8/E4)+(1-\$I\$1)*(C7+D7)</td><td class="fx">=\$I\$2*(C8-C7)+(1-\$I\$2)*D7</td><td class="fx">=\$I\$3*(B8/C8)+(1-\$I\$3)*E4</td><td class="fx">=(C7+D7)*E4</td></tr>
-    <tr><td class="rh">9</td><td>23 Q4</td><td class="val">3</td><td class="fx">=\$I\$1*(B9/E5)+(1-\$I\$1)*(C8+D8)</td><td class="fx">=\$I\$2*(C9-C8)+(1-\$I\$2)*D8</td><td class="fx">=\$I\$3*(B9/C9)+(1-\$I\$3)*E5</td><td class="fx">=(C8+D8)*E5</td></tr>
-    <tr><td class="rh">10</td><td><b>24 Q1</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*1)*E6</td></tr>
-    <tr><td class="rh">11</td><td><b>24 Q2</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*2)*E7</td></tr>
-    <tr><td class="rh">12</td><td><b>24 Q3</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*3)*E8</td></tr>
-    <tr><td class="rh">13</td><td><b>24 Q4</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*4)*E9</td></tr>
+    <tr><th></th><th>A</th><th>B (y)</th><th>C (L<sub>t</sub>)</th><th>D (T<sub>t</sub>)</th><th>E (S<sub>t</sub>)</th><th>F (F<sub>t</sub>)</th><th>G (e&sup2;)</th></tr>
+    <tr><td class="rh">2</td><td>22 Q1</td><td class="val">6</td><td></td><td></td><td class="fx">=B2/\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">3</td><td>22 Q2</td><td class="val">8</td><td></td><td></td><td class="fx">=B3/\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">4</td><td>22 Q3</td><td class="val">3</td><td></td><td></td><td class="fx">=B4/\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">5</td><td>22 Q4</td><td class="val">1</td><td class="fx">=AVERAGE(B2:B5)</td><td class="fx">=(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</td><td class="fx">=B5/\$C\$5</td><td></td><td>-</td></tr>
+    <tr><td class="rh">6</td><td>23 Q1</td><td class="val">8</td><td class="fx">=\$I\$1*(B6/E2)+(1-\$I\$1)*(C5+D5)</td><td class="fx">=\$I\$2*(C6-C5)+(1-\$I\$2)*D5</td><td class="fx">=\$I\$3*(B6/C6)+(1-\$I\$3)*E2</td><td class="fx">=(C5+D5)*E2</td><td class="fx">=(B6-F6)^2</td></tr>
+    <tr><td class="rh">7</td><td>23 Q2</td><td class="val">10</td><td class="fx">=\$I\$1*(B7/E3)+(1-\$I\$1)*(C6+D6)</td><td class="fx">=\$I\$2*(C7-C6)+(1-\$I\$2)*D6</td><td class="fx">=\$I\$3*(B7/C7)+(1-\$I\$3)*E3</td><td class="fx">=(C6+D6)*E3</td><td class="fx">=(B7-F7)^2</td></tr>
+    <tr><td class="rh">8</td><td>23 Q3</td><td class="val">5</td><td class="fx">=\$I\$1*(B8/E4)+(1-\$I\$1)*(C7+D7)</td><td class="fx">=\$I\$2*(C8-C7)+(1-\$I\$2)*D7</td><td class="fx">=\$I\$3*(B8/C8)+(1-\$I\$3)*E4</td><td class="fx">=(C7+D7)*E4</td><td class="fx">=(B8-F8)^2</td></tr>
+    <tr><td class="rh">9</td><td>23 Q4</td><td class="val">3</td><td class="fx">=\$I\$1*(B9/E5)+(1-\$I\$1)*(C8+D8)</td><td class="fx">=\$I\$2*(C9-C8)+(1-\$I\$2)*D8</td><td class="fx">=\$I\$3*(B9/C9)+(1-\$I\$3)*E5</td><td class="fx">=(C8+D8)*E5</td><td class="fx">=(B9-F9)^2</td></tr>
+    <tr><td class="rh">10</td><td><b>24 Q1</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*1)*E6</td><td></td></tr>
+    <tr><td class="rh">11</td><td><b>24 Q2</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*2)*E7</td><td></td></tr>
+    <tr><td class="rh">12</td><td><b>24 Q3</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*3)*E8</td><td></td></tr>
+    <tr><td class="rh">13</td><td><b>24 Q4</b></td><td></td><td></td><td></td><td></td><td class="fx">=(C9+D9*4)*E9</td><td></td></tr>
+    <tr><td class="rh">14</td><td colspan="5" style="text-align:right">MSE =</td><td class="fx" colspan="2">=AVERAGE(G6:G9)</td></tr>
   </table></div>
   <div class="step"><div class="no">1</div><div><strong>Initialise on the last quarter of year 1 (row 5):</strong> level <code>C5 =AVERAGE(B2:B5)</code>; trend <code>D5 =(1/(4*4))*((B6-B2)+(B7-B3)+(B8-B4)+(B9-B5))</code>. Seasonals for each first-season quarter: <code>Sₜ = yₜ &divide; \$C\$5</code> (multiplicative ratios, average &asymp; 1).</div></div>
   <div class="step"><div class="no">2</div><div>From row 6 (period s+1), enter the four formulas (note <code>/</code> and <code>*</code> replace <code>&minus;</code> and <code>+</code>), then <strong>select C6:F6 and drag down to row 9</strong>.</div></div>
   <div class="step"><div class="no">3</div><div><strong>Forecast all of 2024</strong>: <code>F<sub>t+m</sub> = (C9 + D9&times;m) &times; S</code>, with <code>m = 1,2,3,4</code> and the matching season index <code>E6, E7, E8, E9</code>.</div></div>
+  <div class="step"><div class="no">4</div><div><strong>Squared error</strong> <kbd>G6</kbd>: <code>=(B6-F6)^2</code>, drag down to G9. The <strong>MSE</strong> is <code>G14 =AVERAGE(G6:G9)</code>.</div></div>
   <div class="note"><strong>Additive vs multiplicative:</strong> use additive when seasonal swings stay a constant <em>size</em>; use multiplicative when they stay a constant <em>percentage</em> of the level. Optimise &alpha;, &beta;, &gamma; for either with <strong>Data &rarr; Solver</strong>: minimise the MSE cell by changing <code>I1:I3</code>, each constrained to <code>0 &le; &middot; &le; 1</code>.</div>
 `},
 
