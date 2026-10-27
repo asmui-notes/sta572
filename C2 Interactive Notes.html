@@ -690,7 +690,7 @@ const pages = [
   <div class="fbar"><span class="fx-ico">fx</span><span>Index</span><code>=Qavg*(4/SUM(Qavg_range))*100</code></div>
   <p class="small">For monthly data use <code>AVERAGEIF</code> on the month column and the factor <code>12/SUM(...)</code>.</p>
 
-  <h3>In R</h3>
+  <h3>In R - quarterly (typed data)</h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Quarterly: frequency = 4   |   Monthly: frequency = 12</span>
 hw_data <span class="kw">&lt;-</span> <span class="fn">data.frame</span>(Year    = <span class="fn">c</span>(<span class="fn">rep</span>(<span class="nm">2022</span>,<span class="nm">4</span>), <span class="fn">rep</span>(<span class="nm">2023</span>,<span class="nm">4</span>)),
                       Quarter = <span class="fn">rep</span>(<span class="nm">1</span>:<span class="nm">4</span>, <span class="nm">2</span>),
@@ -701,6 +701,20 @@ y <span class="kw">&lt;-</span> <span class="fn">ts</span>(hw_data$Price, start 
 d <span class="kw">&lt;-</span> <span class="fn">decompose</span>(y, type = <span class="st">"multiplicative"</span>)
 d$seasonal          <span class="cm"># the seasonal index for every period</span>
 d$figure            <span class="cm"># the s unique seasonal indices (length 4 or 12)</span>
+
+<span class="fn">monthplot</span>(y)        <span class="cm"># visualise the seasonal pattern</span></pre></div>
+
+  <h3>In R - monthly (from a file)</h3>
+  <p class="small">Reads <code>data/sales.txt</code> (a <code>Sales</code> column), builds a monthly series with <strong>frequency = 12</strong>.</p>
+  <div class="rbox"><div class="rbar">R script</div><pre>sales <span class="kw">&lt;-</span> <span class="fn">read.csv</span>(<span class="st">"data/sales.txt"</span>)
+<span class="cm"># Quarterly: frequency = 4   |   Monthly: frequency = 12</span>
+y <span class="kw">&lt;-</span> <span class="fn">ts</span>(sales$Sales, start = <span class="fn">c</span>(<span class="nm">2020</span>, <span class="nm">1</span>), frequency = <span class="nm">12</span>)
+
+<span class="fn">plot</span>(y)
+
+d <span class="kw">&lt;-</span> <span class="fn">decompose</span>(y, type = <span class="st">"multiplicative"</span>)
+d$seasonal          <span class="cm"># the seasonal index for every period</span>
+d$figure            <span class="cm"># the 12 unique monthly seasonal indices</span>
 
 <span class="fn">monthplot</span>(y)        <span class="cm"># visualise the seasonal pattern</span></pre></div>
   <div class="note"><code>decompose()</code> does exactly these four steps for you; <code>d$figure</code> returns the per-season indices (4 values for quarterly, 12 for monthly).</div>
