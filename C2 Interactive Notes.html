@@ -692,7 +692,11 @@ const pages = [
 
   <h3>In R</h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Quarterly: frequency = 4   |   Monthly: frequency = 12</span>
-y <span class="kw">&lt;-</span> <span class="fn">ts</span>(sales, start = <span class="fn">c</span>(<span class="nm">2021</span>, <span class="nm">1</span>), frequency = <span class="nm">4</span>)
+hw_data <span class="kw">&lt;-</span> <span class="fn">data.frame</span>(Year    = <span class="fn">c</span>(<span class="fn">rep</span>(<span class="nm">2022</span>,<span class="nm">4</span>), <span class="fn">rep</span>(<span class="nm">2023</span>,<span class="nm">4</span>)),
+                      Quarter = <span class="fn">rep</span>(<span class="nm">1</span>:<span class="nm">4</span>, <span class="nm">2</span>),
+                      Price   = <span class="fn">c</span>(<span class="nm">6</span>, <span class="nm">8</span>, <span class="nm">3</span>, <span class="nm">1</span>, <span class="nm">8</span>, <span class="nm">10</span>, <span class="nm">5</span>, <span class="nm">3</span>))
+
+y <span class="kw">&lt;-</span> <span class="fn">ts</span>(hw_data$Price, start = <span class="fn">c</span>(<span class="nm">2022</span>, <span class="nm">1</span>), frequency = <span class="nm">4</span>)
 
 d <span class="kw">&lt;-</span> <span class="fn">decompose</span>(y, type = <span class="st">"multiplicative"</span>)
 d$seasonal          <span class="cm"># the seasonal index for every period</span>
