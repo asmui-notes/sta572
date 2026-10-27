@@ -876,12 +876,18 @@ Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part, h 
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Monthly electricity series (frequency = 12 -&gt; seasonal)</span>
 electricts <span class="kw">&lt;-</span> <span class="fn">ts</span>(electric$electric, start = <span class="fn">c</span>(<span class="nm">2015</span>, <span class="nm">1</span>), frequency = <span class="nm">12</span>)
 
-HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seasonal = <span class="st">"additive"</span>,
-             alpha = <span class="nm">0.9522</span>, beta = <span class="nm">0.0002</span>, gamma = <span class="nm">0.0008</span>)
+<span class="cm"># Let R estimate alpha, beta, gamma by minimising SSE</span>
+HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seasonal = <span class="st">"additive"</span>)
+<span class="fn">summary</span>(HW_fit)   <span class="cm"># shows the fitted alpha, beta, gamma</span>
 
 <span class="fn">autoplot</span>(electricts) +
   <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_fit, h = <span class="nm">12</span>), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
-  <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)</pre></div>
+  <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)
+
+<span class="cm"># Only to reproduce a specific result: supply the values by hand</span>
+<span class="cm"># HW_fix &lt;- hw(electricts, seasonal = "additive",</span>
+<span class="cm">#             alpha = 0.9522, beta = 0.0002, gamma = 0.0008)</span></pre></div>
+  <div class="note"><strong>Do not choose &alpha;, &beta;, &gamma; subjectively.</strong> Omit them and <code>hw()</code> estimates them for you (minimising SSE); read them off <code>summary()</code>. Supply them by hand only to reproduce a specific textbook result or to illustrate a chosen value - and say so in the write-up.</div>
   <p class="small">Use <code>seasonal = "multiplicative"</code> when the seasonal swings <em>grow</em> with the level of the series.</p>
 
   <h3>Decomposition forecast - <code>decompose()</code></h3>
