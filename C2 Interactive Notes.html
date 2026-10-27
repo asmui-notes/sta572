@@ -828,10 +828,11 @@ d$figure            <span class="cm"># the 12 unique monthly seasonal indices</s
 cpi   <span class="kw">&lt;-</span> <span class="fn">read.csv</span>(<span class="st">"data/CPI Malaysia.csv"</span>, check.names = <span class="kw">FALSE</span>)
 cpits <span class="kw">&lt;-</span> <span class="fn">ts</span>(cpi$<span class="st">\`Consumer price index (2010 = 100)\`</span>, start = <span class="nm">1960</span>, frequency = <span class="nm">1</span>)
 
-<span class="cm"># Train / test split</span>
+<span class="cm"># Train / test split - 80% estimation, 20% evaluation</span>
 n       <span class="kw">&lt;-</span> <span class="fn">length</span>(cpits)
-est_part <span class="kw">&lt;-</span> <span class="fn">head</span>(cpits, <span class="nm">50</span>)        <span class="cm"># first 50 obs = estimation</span>
-eva_part <span class="kw">&lt;-</span> <span class="fn">tail</span>(cpits, n - <span class="nm">50</span>)   <span class="cm"># remainder = evaluation</span></pre></div>
+n_est   <span class="kw">&lt;-</span> <span class="fn">floor</span>(<span class="nm">0.8</span> * n)             <span class="cm"># 80% of the observations</span>
+est_part <span class="kw">&lt;-</span> <span class="fn">head</span>(cpits, n_est)         <span class="cm"># first 80% = estimation</span>
+eva_part <span class="kw">&lt;-</span> <span class="fn">tail</span>(cpits, n - n_est)     <span class="cm"># last 20% = evaluation</span></pre></div>
   <div class="note">A monthly series uses <code>frequency = 12</code>; quarterly uses <code>frequency = 4</code>. The frequency is what tells R where the <em>seasons</em> are.</div>
 `},
 
