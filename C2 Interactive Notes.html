@@ -559,24 +559,40 @@ const pages = [
   <div class="note"><code>ABS(...)</code> gives the absolute value; <code>IF(F3=0,0,...)</code> avoids dividing by zero on the first active row.</div>
 `},
 
-{ kind:'note', title:'Holt-Winters & Decomposition', html:`
+{ kind:'note', title:'Holt-Winters', html:`
   <span class="tag">Section 6</span>
   <h2>Seasonal Methods</h2>
   <h3>Holt-Winters</h3>
-  <p>Best when a <strong>seasonal component exists</strong>. Uses three constants: level &alpha;, trend &beta;, season &gamma;. Season length s = 4 (quarterly) or s = 12 (monthly).</p>
-  <table>
-    <tr><th>Model</th><th>Forecast</th></tr>
-    <tr><td>Multiplicative</td><td>F<sub>t+m</sub> = (L<sub>t</sub> + T<sub>t</sub>&middot;m) &times; S<sub>t&minus;s+m</sub></td></tr>
-    <tr><td>Additive</td><td>F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub>&middot;m + S<sub>t&minus;s+m</sub></td></tr>
-  </table>
-  <h3>Decomposition Forecasting</h3>
+  <p>Best when a <strong>seasonal component exists</strong>. Uses three smoothing constants: level &alpha;, trend &beta;, season &gamma;. The difference between the two models is whether the seasonal factor <strong>multiplies</strong> or <strong>adds</strong>.</p>
+
+  <h4>Multiplicative model</h4>
+  <div class="formula">
+    <strong>Level:</strong> &nbsp; L<sub>t</sub> = &alpha; (y<sub>t</sub> / S<sub>t&minus;s</sub>) + (1&minus;&alpha;)(L<sub>t&minus;1</sub> + T<sub>t&minus;1</sub>)<br>
+    <strong>Trend:</strong> &nbsp; T<sub>t</sub> = &beta;(L<sub>t</sub> &minus; L<sub>t&minus;1</sub>) + (1&minus;&beta;)T<sub>t&minus;1</sub><br>
+    <strong>Seasonal:</strong> &nbsp; S<sub>t</sub> = &gamma; (y<sub>t</sub> / L<sub>t</sub>) + (1&minus;&gamma;)S<sub>t&minus;s</sub><br>
+    <strong>Forecast:</strong> &nbsp; F<sub>t+m</sub> = (L<sub>t</sub> + T<sub>t</sub> &times; m) &middot; S<sub>t&minus;s+m</sub>
+  </div>
+
+  <h4>Additive model</h4>
+  <div class="formula">
+    <strong>Level:</strong> &nbsp; L<sub>t</sub> = &alpha; (y<sub>t</sub> &minus; S<sub>t&minus;s</sub>) + (1&minus;&alpha;)(L<sub>t&minus;1</sub> + T<sub>t&minus;1</sub>)<br>
+    <strong>Trend:</strong> &nbsp; T<sub>t</sub> = &beta;(L<sub>t</sub> &minus; L<sub>t&minus;1</sub>) + (1&minus;&beta;)T<sub>t&minus;1</sub><br>
+    <strong>Seasonal:</strong> &nbsp; S<sub>t</sub> = &gamma; (y<sub>t</sub> &minus; L<sub>t</sub>) + (1&minus;&gamma;)S<sub>t&minus;s</sub><br>
+    <strong>Forecast:</strong> &nbsp; F<sub>t+m</sub> = L<sub>t</sub> + T<sub>t</sub> &times; m + S<sub>t&minus;s+m</sub>
+  </div>
+  <p class="small">where <code>0 &le; &alpha; &le; 1</code>, <code>0 &le; &beta; &le; 1</code>, <code>0 &le; &gamma; &le; 1</code>; <strong>s</strong> is the season length (s = 4 for quarterly, s = 12 for monthly); and <strong>m</strong> is the number of steps ahead to forecast.</p>
+`},
+
+{ kind:'note', title:'Decomposition Forecasting', html:`
+  <span class="tag">Section 6b</span>
+  <h2>Decomposition Forecasting</h2>
   <p>Assumes <strong>past patterns repeat</strong>. Suitable for data with both <strong>trend and seasonal</strong> components (cyclical and irregular excluded).</p>
   <table>
     <tr><th>Relationship</th><th>Forecast</th></tr>
     <tr><td>Multiplicative</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></td></tr>
     <tr><td>Additive</td><td>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></td></tr>
   </table>
-  <h3>Decomposition forecasting - the 3 steps</h3>
+  <h3>The 3 steps</h3>
   <div class="step"><div class="no">1</div><div><strong>Compute the trend</strong> (T&#770;<sub>t</sub>) by fitting a linear regression on the time index, or by a moving average.</div></div>
   <div class="step"><div class="no">2</div><div><strong>Compute the seasonal indices</strong> (S<sub>t</sub>) using ratio-to-moving-average (see the worked example next).</div></div>
   <div class="step"><div class="no">3</div><div><strong>Combine</strong> trend and seasonal to forecast: <code>F<sub>t</sub> = T&#770;<sub>t</sub> &times; S<sub>t</sub></code> (multiplicative) or <code>F<sub>t</sub> = T&#770;<sub>t</sub> + S<sub>t</sub></code> (additive).</div></div>
