@@ -840,26 +840,27 @@ eva_part <span class="kw">&lt;-</span> <span class="fn">tail</span>(cpits, n - n
   <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
   <h2>&#128200; SES &amp; Holt&rsquo;s method in R</h2>
   <h3>Single Exponential Smoothing - <code>ses()</code></h3>
-  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Fit on the estimation set (R picks the optimal alpha)</span>
-SE_est <span class="kw">&lt;-</span> <span class="fn">ses</span>(est_part)
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Fit on the estimation set; forecast across the hold-out horizon</span>
+SE_est <span class="kw">&lt;-</span> <span class="fn">ses</span>(est_part, h = <span class="fn">length</span>(eva_part))
 <span class="fn">summary</span>(SE_est)
 
-<span class="cm"># Forecast 5 years ahead with a chosen alpha, and plot</span>
+<span class="cm"># Out-of-sample error: forecasts vs the actual hold-out values</span>
+<span class="fn">accuracy</span>(SE_est, eva_part)   <span class="cm"># read the "Test set" row</span>
+
+<span class="cm"># Forecast 5 years ahead on the full series, and plot</span>
 <span class="fn">autoplot</span>(cpits) +
-  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(<span class="fn">ses</span>(cpits, alpha = <span class="nm">0.999</span>), h = <span class="nm">5</span>),
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(<span class="fn">ses</span>(cpits), h = <span class="nm">5</span>),
             series = <span class="st">"SES Forecast"</span>, PI = <span class="kw">TRUE</span>) +
   <span class="fn">ylab</span>(<span class="st">"CPI (2010 = 100)"</span>) + <span class="fn">xlab</span>(<span class="st">"Year"</span>)</pre></div>
-  <div class="rout">Smoothing parameters:
-  alpha = 0.9999
-Initial states:  l = 24.13
-sigma:  1.42
-     AIC     AICc      BIC
-  ...      ...      ...</div>
+  <div class="note"><code>accuracy(SE_est, eva_part)</code> prints a <strong>Training set</strong> row (in-sample, from <code>est_part</code>) and a <strong>Test set</strong> row - the Test-set RMSE / MAE / MAPE is the <strong>out-of-sample</strong> error. Do <em>not</em> refit with <code>ses(eva_part)</code>: that would fit a new model on the hold-out data and report in-sample error instead.</div>
 
   <h3>Holt&rsquo;s method - <code>holt()</code></h3>
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Two constants: alpha (level) and beta (trend)</span>
-Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part)
+Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part, h = <span class="fn">length</span>(eva_part))
 <span class="fn">summary</span>(Holt_est)
+
+<span class="cm"># Out-of-sample error: forecasts vs the actual hold-out values</span>
+<span class="fn">accuracy</span>(Holt_est, eva_part)   <span class="cm"># read the "Test set" row</span>
 
 <span class="fn">autoplot</span>(cpits) +
   <span class="fn">autolayer</span>(<span class="fn">forecast</span>(<span class="fn">holt</span>(cpits, alpha = <span class="nm">0.9922</span>, beta = <span class="nm">0.3708</span>), h = <span class="nm">5</span>),
