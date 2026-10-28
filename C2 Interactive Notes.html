@@ -819,9 +819,8 @@ d$figure            <span class="cm"># the 12 unique monthly seasonal indices</s
 { kind:'note', title:'R: Setup & Data', html:`
   <span class="tag" style="background:#e5e3fb;color:#3730a3">R demo</span>
   <h2>&#128200; R setup &amp; preparing the data</h2>
-  <p>The chapter uses the <strong>forecast</strong> / <strong>fpp2</strong> packages. Load the data as a <strong>ts()</strong> object, then split it into an <strong>estimation</strong> and <strong>evaluation</strong> set.</p>
-  <div class="rbox"><div class="rbar">R script</div><pre><span class="fn">library</span>(fpp2)
-<span class="fn">library</span>(forecast)
+  <p>The chapter uses the <strong>forecast</strong> package. Load the data as a <strong>ts()</strong> object, then split it into an <strong>estimation</strong> and <strong>evaluation</strong> set.</p>
+  <div class="rbox"><div class="rbar">R script</div><pre><span class="fn">library</span>(forecast)
 <span class="fn">library</span>(ggplot2)
 
 <span class="cm"># Read Malaysia CPI and make a yearly time series</span>
