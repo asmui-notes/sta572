@@ -875,12 +875,19 @@ Holt_est <span class="kw">&lt;-</span> <span class="fn">holt</span>(est_part, h 
   <div class="rbox"><div class="rbar">R script</div><pre><span class="cm"># Monthly electricity series (frequency = 12 -&gt; seasonal)</span>
 electricts <span class="kw">&lt;-</span> <span class="fn">ts</span>(electric$electric, start = <span class="fn">c</span>(<span class="nm">2015</span>, <span class="nm">1</span>), frequency = <span class="nm">12</span>)
 
-<span class="cm"># Let R estimate alpha, beta, gamma by minimising SSE</span>
-HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seasonal = <span class="st">"additive"</span>)
-<span class="fn">summary</span>(HW_fit)   <span class="cm"># shows the fitted alpha, beta, gamma</span>
+<span class="cm"># Train / test split - 80% estimation, 20% evaluation</span>
+n_e      <span class="kw">&lt;-</span> <span class="fn">length</span>(electricts)
+n_est_e  <span class="kw">&lt;-</span> <span class="fn">floor</span>(<span class="nm">0.8</span> * n_e)
+est_elec <span class="kw">&lt;-</span> <span class="fn">head</span>(electricts, n_est_e)        <span class="cm"># first 80%</span>
+eva_elec <span class="kw">&lt;-</span> <span class="fn">tail</span>(electricts, n_e - n_est_e)   <span class="cm"># last 20%</span>
+
+<span class="cm"># Fit on est_elec; R estimates alpha, beta, gamma by minimising SSE</span>
+HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(est_elec, seasonal = <span class="st">"additive"</span>, h = <span class="fn">length</span>(eva_elec))
+<span class="fn">summary</span>(HW_fit)             <span class="cm"># shows the fitted alpha, beta, gamma</span>
+<span class="fn">accuracy</span>(HW_fit, eva_elec)   <span class="cm"># out-of-sample error: "Test set" row</span>
 
 <span class="fn">autoplot</span>(electricts) +
-  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_fit, h = <span class="nm">12</span>), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_fit, h = <span class="fn">length</span>(eva_elec)), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
   <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)
 
 <span class="cm"># Only to reproduce a specific result: supply the values by hand</span>
