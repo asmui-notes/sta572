@@ -886,8 +886,10 @@ HW_fit <span class="kw">&lt;-</span> <span class="fn">hw</span>(est_elec, season
 <span class="fn">summary</span>(HW_fit)             <span class="cm"># shows the fitted alpha, beta, gamma</span>
 <span class="fn">accuracy</span>(HW_fit, eva_elec)   <span class="cm"># out-of-sample error: "Test set" row</span>
 
+<span class="cm"># Final forecast: refit on the FULL series, project 12 months ahead</span>
+HW_all <span class="kw">&lt;-</span> <span class="fn">hw</span>(electricts, seasonal = <span class="st">"additive"</span>)
 <span class="fn">autoplot</span>(electricts) +
-  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_fit, h = <span class="fn">length</span>(eva_elec)), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
+  <span class="fn">autolayer</span>(<span class="fn">forecast</span>(HW_all, h = <span class="nm">12</span>), series = <span class="st">"HW Forecast"</span>, PI = <span class="kw">TRUE</span>) +
   <span class="fn">ylab</span>(<span class="st">"Output Index"</span>)
 
 <span class="cm"># Only to reproduce a specific result: supply the values by hand</span>
