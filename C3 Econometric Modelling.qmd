@@ -264,6 +264,10 @@ $$y_t = \beta_0 + \sum_{m=1}^{k} \beta_m x_{mt} + \sum_{j=1}^{p} \phi_j y_{t-j} 
 **Why drop one variable at a time?** The significance of one variable depends on what other variables are in the model. Dropping multiple variables simultaneously can lead to incorrect conclusions about which variables truly matter.
 :::
 
+::: {.callout-important}
+**When the criteria conflict.** The highest $p$-value, a wrong sign and a very high VIF can point to different variables. When regressors are severely collinear the standard errors are inflated, so $p$-values are unreliable and a wrong-signed, highly collinear variable may be removed before the one with the highest $p$-value. In the worked example below, the criterion used at each step is stated in the interpretation of that model. Whenever a step departs from the strict highest-$p$-value rule, say so explicitly and check what it costs in terms of adjusted $R^2$ and the diagnostic tests.
+:::
+
 **Practical considerations for the general model:**
 
 - Maintain a small number of explanatory variables to control cost, avoid multicollinearity, and keep the model interpretable.
@@ -379,7 +383,6 @@ $$DW = \frac{\sum_{t=2}^{n}(\varepsilon_t - \varepsilon_{t-1})^2}{\sum_{t=1}^{n}
 
 - **Decision:** If the $p$-value from the Durbin-Watson test is less than 0.05, serial correlation is present.
 - **Remedy:** Include a lag of the dependent variable ($y_{t-1}$) or a lag of an independent variable. Usually, lag 1 is sufficient to resolve the problem.
-
 ### Multicollinearity
 
 **Multicollinearity** occurs when two or more independent variables are linearly related to each other.
@@ -482,7 +485,7 @@ lag1 <- c(NA, econ$`Number of Car Registration ('000)`[
 
 ### Model 1 — Full Model (All Variables, No Lag)
 
-The first model includes all seven independent variables. This is the **general model** in the General-to-Specific procedure.
+The first model includes all seven independent variables, with no lagged terms. It is the starting point of the procedure, but because it contains no lag of $y_t$ it is not yet the full ADL (general) model described earlier; that is Model 2, which adds $y_{t-1}$. Note also that Model 1 is estimated on 54 observations, whereas Models 2–7 lose the first observation to the lag and use 53, so Model 1's fit statistics are not strictly comparable with the others.
 
 $$\hat{y}_t = \hat{\beta}_0 + \hat{\beta}_1(\text{Unemployment}) + \hat{\beta}_2(\text{CPI}) + \hat{\beta}_3(\text{BLR}) + \hat{\beta}_4(\text{GDP}) + \hat{\beta}_5(\text{Export}) + \hat{\beta}_6(\text{Population}) + \hat{\beta}_7(\text{Income})$$
 
@@ -536,11 +539,11 @@ grid.arrange(p1, p2, ncol = 2)
 ::: {.callout-note}
 **Model 1 Interpretation:**
 
-- The adjusted $R^2$ and F-test are highly significant — the variables collectively explain most of the variation in car registrations.
-- However, **CPI** and **GDP** registered signs *contrary* to theoretical expectations (positive instead of negative/positive as expected in this context).
-- The **VIF of GDP** is extremely high, indicating severe multicollinearity.
-- The **Breusch-Pagan** $p$-value $> 0.05$: no heteroscedasticity problem.
-- The **Durbin-Watson** test is significant ($p < 0.05$): **serial correlation problem exists**.
+- The adjusted $R^2$ (≈ 0.962) and the F-test are highly significant — the variables collectively explain most of the variation in car registrations.
+- However, **CPI** (positive, but a negative sign is expected) and **GDP** (negative, but a positive sign is expected) registered signs *contrary* to theoretical expectations.
+- Multicollinearity is severe: the VIFs of **GDP** (≈ 414), **Income** (≈ 170), **Total Population** (≈ 55) and **Total Export** (≈ 34) all far exceed 10. These four series trend upward together and are almost perfectly correlated, so their individual effects cannot be separated.
+- The **Breusch-Pagan** $p$-value (≈ 0.35) $> 0.05$: no heteroscedasticity problem.
+- The **Durbin-Watson** statistic (≈ 1.10) is significant ($p < 0.05$): **serial correlation problem exists**.
 
 **Action:** Add the lag variable of new car registration to address the serial correlation.
 :::
@@ -581,9 +584,10 @@ bptest(model2)
 
 - The DW value improved to approximately 1.85 and $p > 0.05$: **serial correlation problem resolved**.
 - Only **Total Export**, **Unemployment Rate**, and the **lag variable** are statistically significant.
-- **CPI** and **GDP** still show incorrect signs, and GDP has a very high VIF — multicollinearity persists.
+- **CPI** and **GDP** still show incorrect signs, and GDP has a very high VIF (≈ 412) — multicollinearity persists.
+- The **Breusch-Pagan** $p$-value is now ≈ 0.02, a mild sign of heteroscedasticity. It stays below 0.05 until Model 6 and clears only in Model 7.
 
-**Action:** Drop GDP (most insignificant with highest VIF) from the model.
+**Action:** Drop GDP. Note that GDP is *not* the most insignificant variable: CPI has the highest $p$-value ($p \approx 0.88$, against $p \approx 0.30$ for GDP). GDP is removed first because it carries the wrong sign and by far the highest VIF. With a VIF this large its $p$-value cannot be trusted, since GDP is almost perfectly correlated with Income, Total Population and Total Export.
 :::
 
 ---
@@ -616,11 +620,11 @@ bptest(model3)
 ::: {.callout-note}
 **Model 3 Interpretation:**
 
-- The model improved with higher $R^2$ and no serial correlation problem.
-- However, **CPI** and **Income** registered incorrect signs.
-- **Income** is the most insignificant variable.
+- Adjusted $R^2$ is essentially unchanged (0.9764 → 0.9763), as expected when removing a variable that added nothing, and there is still no serial correlation problem.
+- However, **CPI** (positive) and **Income** (negative) still register incorrect signs.
+- Several VIFs remain above 10: **Total Population** (≈ 50), **Total Export** (≈ 25), the lag variable (≈ 18) and **Income** (≈ 13).
 
-**Action:** Drop Income from the model.
+**Action:** Drop Income. It is *not* the most insignificant variable: CPI ($p \approx 0.99$) and Total Population ($p \approx 0.92$) both have higher $p$-values than Income ($p \approx 0.67$). Income is removed first because it has the wrong sign and a VIF above 10, being strongly correlated with Population and Export. CPI is not collinear with the other variables (VIF ≈ 1.5), so it is dealt with later once the collinear variables have been reduced.
 :::
 
 ---
@@ -653,8 +657,9 @@ bptest(model4)
 ::: {.callout-note}
 **Model 4 Interpretation:**
 
-- The model produces a high $R^2$ but most variables remain insignificant — a hallmark of multicollinearity.
-- **Total Population** has an incorrect sign (negative, contrary to the expected positive relationship) and is insignificant.
+- The model produces a high $R^2$ but most variables remain insignificant — a hallmark of multicollinearity (VIF ≈ 29 for Total Population and ≈ 24 for Total Export).
+- **Total Population** has an incorrect sign (negative, contrary to the expected positive relationship), is insignificant ($p \approx 0.81$) and has the highest VIF.
+- CPI has a higher $p$-value ($p \approx 0.94$), but its sign is now the expected negative one and its VIF is low (≈ 1.4), so it is not the priority at this step.
 
 **Action:** Remove Total Population from the model.
 :::
@@ -689,8 +694,8 @@ bptest(model5)
 ::: {.callout-note}
 **Model 5 Interpretation:**
 
-- The model still shows evidence of multicollinearity: high $R^2$ but insignificant variables.
-- **CPI** is the most insignificant variable.
+- The model still shows evidence of multicollinearity: Total Export (VIF ≈ 16.5) and the lag variable (≈ 15.0) still exceed 10, and BLR is insignificant ($p \approx 0.46$).
+- **CPI** is the most insignificant variable ($p \approx 0.99$) and contributes nothing statistically, so it is removed next.
 
 **Action:** Remove CPI from the model.
 :::
@@ -725,11 +730,17 @@ bptest(model6)
 ::: {.callout-note}
 **Model 6 Interpretation:**
 
-- After removing CPI, the model improved significantly: high $R^2$ with three significant variables.
+- After removing CPI, adjusted $R^2$ reaches its highest value of all seven models (≈ 0.978), with three significant variables: Unemployment Rate, Total Export and the lag variable. **BLR** is not significant ($p \approx 0.45$).
 - The Durbin-Watson value confirms **no serial correlation problem**.
-- However, VIF values for **Total Export** and the lag variable indicate multicollinearity still exists between these two variables.
+- However, the VIFs of **Total Export** (≈ 16.1) and the **lag variable** (≈ 14.6) show that multicollinearity still exists between these two variables, and the Breusch-Pagan $p$-value (≈ 0.02) is still below 0.05.
 
-**Action:** Remove Total Export from the model.
+**Action:** Remove Total Export from the model. This step follows the **multicollinearity remedy** (dropping the offending variable) rather than the highest-$p$-value rule, and it should be stated openly: by $p$-value, BLR ($p \approx 0.45$) would be dropped next, and Total Export is in fact highly significant. Total Export is removed because:
+
+- its VIF (≈ 16.1) is the highest in the model, and the lag variable (≈ 14.6) cannot be removed because it is what resolves the serial correlation;
+- it has the weakest *direct* link to car demand among the remaining variables: it is a general indicator of prosperity that moves together with the other trending series, whereas BLR acts directly on the cost of financing a car (the chapter's remedy is to drop the variable with the least theoretical support or the highest VIF);
+- Model 6 still fails the Breusch-Pagan test and has two VIFs above 10.
+
+The consequences of this choice are discussed under Model 7.
 :::
 
 ---
@@ -806,10 +817,18 @@ ggplot(fit_df, aes(x = Year)) +
 
 - The model is overall **highly significant** (F-test $p < 0.05$).
 - All three variables — **Unemployment Rate**, **BLR**, and the **lag of car registrations** — are statistically significant.
-- **No serial correlation**: DW $\approx 2$, $p > 0.05$.
-- **No multicollinearity**: all VIF values are well below 10.
-- **No heteroscedasticity**: Breusch-Pagan $p > 0.05$.
+- **No serial correlation**: DW ≈ 1.76, $p > 0.05$.
+- **No serious multicollinearity**: all VIF values are below 10, although the lag variable (≈ 7.6) falls in the 5–10 "moderate concern" band.
+- **No heteroscedasticity**: Breusch-Pagan $p \approx 0.22 > 0.05$ — the first model since Model 1 to pass this test.
 - All signs are consistent with economic theory.
+
+**Why Model 7 is retained.** Model 7 is the **only one of the seven models that passes all six diagnostic tests together**. Models 2–6 each fail the Breusch-Pagan test ($p < 0.05$) and each have at least one VIF above 10, while Model 1 fails the Durbin-Watson test and has severe multicollinearity (see the summary table below). All three variables in Model 7 also have a clear, theory-consistent interpretation.
+
+**Limitations to state openly:**
+
+- Compared with Model 6, adjusted $R^2$ falls (0.9777 → 0.9682). This is a modest loss in fit, accepted in exchange for passing all the diagnostics.
+- BLR is significant here ($p \approx 0.005$) but was not in Model 6 ($p \approx 0.45$). The two variables are strongly negatively correlated, so part of BLR's coefficient may reflect the export effect that was removed, and it should be interpreted with care.
+- The choice rests on judgement, not on the $t$-test alone. Following the strict highest-$p$-value rule from Model 2 would have dropped BLR and kept Total Export instead (Unemployment Rate, Total Export and the lag variable). The statistics do not clearly separate the two models, so the choice between them rests on theory and on the purpose of the model.
 :::
 
 ---
@@ -832,9 +851,11 @@ where:
 | Coefficient | Value | Interpretation |
 |---|---|---|
 | Intercept | 264.94 | Baseline car registrations when all predictors are zero |
-| Unemployment Rate | $-16.68$ | A 1 percentage-point increase in unemployment reduces car demand by approximately **16,680 units** |
-| BLR | $-13.84$ | A 1 percentage-point increase in BLR reduces car demand by approximately **13,840 units** |
+| Unemployment Rate | $-16.68$ | A 1 percentage-point increase in unemployment reduces car registrations in the same year by approximately **16,680 units** (short-run effect, holding the other variables fixed) |
+| BLR | $-13.84$ | A 1 percentage-point increase in BLR reduces car registrations in the same year by approximately **13,840 units** (short-run effect, holding the other variables fixed) |
 | Lag of car registrations | $+0.78$ | If car registrations increased by 1,000 last year, demand this year increases by approximately **780 units** |
+
+Because the model contains the lag of the dependent variable, the coefficients above are **short-run (same-year) effects**. The effect carries forward through $y_{t-1}$, so the long-run effect of a permanent change is the coefficient divided by $(1 - 0.78)$: about $-16.68/0.22 \approx -76$ thousand units for a 1-point rise in unemployment, and $-13.84/0.22 \approx -63$ thousand units for a 1-point rise in BLR.
 
 All signs are consistent with economic theory: higher unemployment and higher borrowing costs both suppress consumer demand for cars, while past registration levels exhibit strong positive persistence.
 
@@ -875,6 +896,10 @@ cat("Forecast in actual units:", round(y_hat_2023 * 1000), "\n")
 
 ::: {.callout-note}
 **Forecasting caveat:** The quality of this forecast depends on how accurately we know (or can forecast) the unemployment rate and BLR for 2023. If those values are themselves uncertain, the forecast error will be larger than the model's in-sample statistics suggest.
+:::
+
+::: {.callout-warning}
+**Stationarity caveat.** The model is estimated on the *levels* of the series, and most of them trend upward over 1969–2022. A quick Augmented Dickey-Fuller check (not shown here) does not reject a unit root for car registrations, BLR, unemployment, exports, population, GDP or income. Regressions on non-stationary levels can give a high $R^2$ with spurious relationships; Model 1's very high $R^2$ (≈ 0.96) together with a low Durbin-Watson statistic (≈ 1.10) is the classic warning sign. The lag of the dependent variable reduces the problem but does not remove it, so the results should be read as a description of this sample. Differencing the series (see Chapter 4) or an error-correction model is the natural next step.
 :::
 
 #### Model Selection Summary Table
@@ -944,12 +969,12 @@ This chapter covered the complete framework for **econometric modelling** in tim
 4. **Assumptions:** Five key assumptions govern OLS — linearity, correct specification, no multicollinearity, homoscedasticity, and no serial correlation. Violations require diagnostic tests and remedial action.
 
 5. **Model Estimation Strategies:**
-   - **General-to-Specific** (backward): Start with the full model and systematically drop the most insignificant variable at each stage until a parsimonious model is reached.
+   - **General-to-Specific** (backward): Start with the full model and systematically drop the most insignificant variable at each stage until a parsimonious model is reached, giving priority to wrong-signed or highly collinear variables when multicollinearity makes the $p$-values unreliable.
    - **Specific-to-General** (forward): Start simple and add variables one at a time.
 
 6. **Statistical Validation:** A valid model must pass six diagnostic tests: F-test, t-tests, adjusted $R^2$, Breusch-Pagan (heteroscedasticity), Durbin-Watson (serial correlation), and VIF (multicollinearity).
 
-7. **Worked Example:** The final model for Malaysian new car registrations identified **Unemployment Rate**, **BLR**, and the **lag of car registrations** as the significant determinants. The model satisfies all diagnostic conditions and produces an interpretable, parsimonious equation.
+7. **Worked Example:** The final model for Malaysian new car registrations identified **Unemployment Rate**, **BLR**, and the **lag of car registrations** as the significant determinants. The final model is the only one of the seven to pass the F-test, $t$-tests, serial-correlation, heteroscedasticity and VIF checks together, and it gives an interpretable, parsimonious equation. Choosing it over Model 6 meant removing a highly significant but collinear variable (Total Export), a judgement that should be stated openly.
 
 ---
 
